@@ -1,0 +1,11 @@
+# 1. Aşama: Gerekli Python sürümünü ve temel ortamı kuruyoruz.
+FROM python:3.10-slim
+WORKDIR /app
+# Gerekli kütüphaneler (psycopg2 dahil)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+# Tüm uygulama dosyalarını kopyalıyoruz
+COPY . .
+ENV PORT 8080
+# Konteyner başladığında çalışacak betik
+CMD ["/bin/bash", "./startup.sh"]
