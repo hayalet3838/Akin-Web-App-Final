@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vardiya Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; 
+            --text-light: #64748b; --primary-color: #3b82f6; --success-color: #22c55e; 
+            --warning-color: #f59e0b; --danger-color: #ef4444; --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-success { background-color: var(--success-color); color: white; border-color: var(--success-color); }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        
+        .content-card { 
+            background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; 
+            box-shadow: var(--card-shadow); border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+        }
+        .content-card h2, .content-card h3 {
+            font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem;
+        }
+        .content-card h3 { font-size: 1.25rem; margin-top: 2rem; }
+        
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+        .actions button { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--danger-color); }
+
+        .content-grid { display: grid; grid-template-columns: 400px 1fr; gap: 2rem; align-items: start; }
+        
+        .plan-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .plan-header h2 { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+        .plan-controls { display: flex; align-items: center; gap: 1rem; }
+        .plan-controls input { padding: 0.7rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem; }
+
+        /* --- YENİ TAKVİM STİLLERİ --- */
+        #planContainer { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 2.5rem; }
+        .personel-calendar-card h3 { font-size: 1.25rem; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
+        .calendar-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+        .calendar-table th { padding: 0.75rem 0.5rem; text-align: center; font-size: 0.9rem; }
+        .calendar-table td {
+            border: 1px solid var(--border-color);
+            height: 90px;
+            vertical-align: top;
+            padding: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        .calendar-table td.empty { background-color: #f8fafc; }
+        .day-number { font-weight: 600; margin-bottom: 0.25rem; color: var(--text-light); }
+        .calendar-table select { width: 100%; border: none; background: transparent; -webkit-appearance: none; appearance: none; text-align: left; font-family: inherit; font-size: 0.9rem; cursor: pointer; border-radius: 0; padding: 0.2rem 0; }
+        .calendar-table select:focus { outline: 1px solid var(--primary-color); }
+
+        .calendar-table td.has-shift { background-color: #e0f2fe; }
+        .calendar-table td.has-shift select { font-weight: 600; color: #0c4a6e; }
+        .calendar-table td.weekend { background-color: #fef2f2; }
+
+
+        @media (max-width: 992px) { .content-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="far fa-calendar-alt"></i> Vardiya Yönetimi</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Vardiya Yönetimi ve Planlama</h1>
+        </div>
+        <div class="content-grid">
+            <div class="content-card">
+                <h2>Vardiya Tanımları</h2>
+                <table><thead><tr><th>Adı</th><th>Saatler</th><th>İşlemler</th></tr></thead><tbody id="vardiyaListesi"></tbody></table>
+                <h3 style="margin-top:2rem;">Yeni Vardiya Ekle</h3>
+                <form id="vardiyaForm">
+                    <div class="form-group"><label for="vardiya_adi">Vardiya Adı</label><input type="text" id="vardiya_adi" required></div>
+                    <div class="form-group"><label for="baslangic_saati">Başlangıç Saati</label><input type="time" id="baslangic_saati" required></div>
+                    <div class="form-group"><label for="bitis_saati">Bitiş Saati</label><input type="time" id="bitis_saati" required></div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-plus"></i> Vardiya Ekle</button>
+                </form>
+            </div>
+            <div class="content-card">
+                <div class="plan-header">
+                    <h2>Aylık Vardiya Planı</h2>
+                    <div class="plan-controls">
+                        <input type="month" id="aySecici">
+                        <button id="planiGetirBtn" class="btn btn-primary">Getir</button>
+                        <button id="planiKaydetBtn" class="btn btn-success" style="display:none;">Kaydet</button>
+                    </div>
+                </div>
+                <div id="planContainer"><p style="text-align: center; padding: 2rem; color: var(--text-light);">Lütfen bir yıl ve ay seçerek planı getirin.</p></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API_PREFIX = '/api';
+        let personelList = [], vardiyaList = [];
+
+        function handleShiftChange(selectElement) {
+            selectElement.dataset.changed = 'true';
+            const parentTd = selectElement.closest('td');
+            if (selectElement.value !== '0') {
+                parentTd.classList.add('has-shift');
+            } else {
+                parentTd.classList.remove('has-shift');
+            }
+        }
+
+        async function loadInitialData() {
+            try {
+                await Promise.all([loadVardiyalar(), loadPersonel()]);
+                const now = new Date();
+                document.getElementById('aySecici').value = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+            } catch (error) {
+                console.error("Başlangıç verileri yüklenirken hata:", error);
+                alert("Sayfa verileri yüklenemedi.");
+            }
+        }
+
+        async function loadVardiyalar() {
+            const response = await fetch(`${API_PREFIX}/vardiyalar`);
+            vardiyaList = await response.json();
+            const tbody = document.getElementById('vardiyaListesi');
+            tbody.innerHTML = '';
+            vardiyaList.forEach(v => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${v.vardiya_adi}</td>
+                        <td>${v.baslangic_saati} - ${v.bitis_saati}</td>
+                        <td class="actions"><button onclick="deleteVardiya(${v.id})" title="Sil"><i class="fas fa-trash"></i></button></td>
+                    </tr>`;
+            });
+        }
+        
+        async function loadPersonel() {
+            const response = await fetch(`${API_PREFIX}/personel`);
+            personelList = await response.json();
+        }
+
+        async function createVardiya(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                vardiya_adi: form.vardiya_adi.value,
+                baslangic_saati: form.baslangic_saati.value,
+                bitis_saati: form.bitis_saati.value,
+            };
+            try {
+                const response = await fetch(`${API_PREFIX}/vardiyalar`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                form.reset();
+                await loadVardiyalar();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+
+        async function deleteVardiya(id) {
+            if (!confirm('Bu vardiya tanımını silerseniz, bu vardiyaya atanmış tüm personel planları da silinir. Emin misiniz?')) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/vardiyalar/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadVardiyalar();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+
+        async function generateCalendars() {
+            const planContainer = document.getElementById('planContainer');
+            const aySecici = document.getElementById('aySecici');
+            const aySeciciValue = aySecici.value;
+            
+            if (!aySeciciValue) {
+                alert("Lütfen bir ay seçin.");
+                return;
+            }
+            
+            planContainer.innerHTML = '<p style="text-align: center; padding: 2rem;">Yükleniyor...</p>';
+            const [year, month] = aySeciciValue.split('-');
+            
+            try {
+                const response = await fetch(`${API_PREFIX}/personel-vardiyalari?yil=${year}&ay=${month}`);
+                const atamalar = await response.json();
+                
+                let containerHtml = '';
+                personelList.forEach(personel => {
+                    containerHtml += `<div class="personel-calendar-card"><h3>${personel.ad_soyad}</h3>`;
+                    containerHtml += createCalendarForPerson(personel, parseInt(year), parseInt(month), atamalar[personel.id] || {});
+                    containerHtml += `</div>`;
+                });
+
+                planContainer.innerHTML = containerHtml;
+                document.getElementById('planiKaydetBtn').style.display = 'inline-flex';
+
+            } catch (error) {
+                console.error("Vardiya planı oluşturulurken hata:", error);
+                planContainer.innerHTML = `<p style="text-align: center; padding: 2rem; color: var(--danger-color);">Vardiya planı yüklenemedi.</p>`;
+            }
+        }
+
+        function createCalendarForPerson(personel, year, month, personelAtamalari) {
+            let tableHtml = '<table class="calendar-table"><thead><tr><th>Pzt</th><th>Sal</th><th>Çar</th><th>Per</th><th>Cum</th><th>Cmt</th><th>Paz</th></tr></thead><tbody>';
+            
+            const firstDay = new Date(year, month - 1, 1);
+            const daysInMonth = new Date(year, month, 0).getDate();
+            let startingDay = firstDay.getDay(); // Pazar: 0, Pzt: 1...
+            if (startingDay === 0) startingDay = 7; // Pazar'ı 7 yap
+
+            let date = 1;
+            tableHtml += '<tr>';
+            // Ayın ilk gününe kadar boş hücreler ekle
+            for (let i = 1; i < startingDay; i++) {
+                tableHtml += '<td class="empty"></td>';
+            }
+
+            // Ayın günlerini doldur
+            for (let i = 1; i <= daysInMonth; i++) {
+                const currentDate = new Date(year, month - 1, i);
+                const dayOfWeek = currentDate.getDay();
+
+                const dbTarihStr = `${year}-${month.toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`;
+                let optionsHtml = '<option value="0">Boş</option>';
+                vardiyaList.forEach(v => { optionsHtml += `<option value="${v.id}">${v.vardiya_adi}</option>`; });
+                
+                const mevcutAtama = personelAtamalari[i] || 0;
+                let cellClass = '';
+                if (mevcutAtama !== 0) cellClass += 'has-shift ';
+                if (dayOfWeek === 6 || dayOfWeek === 0) cellClass += 'weekend';
+
+                tableHtml += `
+                    <td class="${cellClass.trim()}">
+                        <div class="day-number">${i}</div>
+                        <select data-personel-id="${personel.id}" data-tarih="${dbTarihStr}" onchange="handleShiftChange(this)">
+                            ${optionsHtml.replace(`value="${mevcutAtama}"`, `value="${mevcutAtama}" selected`)}
+                        </select>
+                    </td>
+                `;
+
+                if ((startingDay + i - 1) % 7 === 0 && i < daysInMonth) {
+                    tableHtml += '</tr><tr>';
+                }
+            }
+            
+            // Son satırı tamamlamak için boş hücreler ekle
+            let lastDayIndex = (startingDay + daysInMonth - 2) % 7;
+            for (let i = lastDayIndex; i < 6; i++) {
+                tableHtml += '<td class="empty"></td>';
+            }
+
+            tableHtml += '</tr></tbody></table>';
+            return tableHtml;
+        }
+
+        async function saveVardiyaPlani() {
+            const atamalar = [];
+            document.querySelectorAll("select[data-changed='true']").forEach(select => {
+                atamalar.push({
+                    personel_id: parseInt(select.dataset.personelId),
+                    vardiya_id: parseInt(select.value),
+                    tarih: select.dataset.tarih,
+                });
+            });
+            if (atamalar.length === 0) {
+                alert('Kaydedilecek bir değişiklik yapılmadı.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_PREFIX}/personel-vardiyalari`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ atamalar })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                document.querySelectorAll("select[data-changed='true']").forEach(select => select.removeAttribute('data-changed'));
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadInitialData();
+            document.getElementById('vardiyaForm').addEventListener('submit', createVardiya);
+            document.getElementById('planiGetirBtn').addEventListener('click', generateCalendars);
+            document.getElementById('planiKaydetBtn').addEventListener('click', saveVardiyaPlani);
+
+            window.deleteVardiya = deleteVardiya;
+            window.handleShiftChange = handleShiftChange;
+        });
+    </script>
+</body>
+</html>

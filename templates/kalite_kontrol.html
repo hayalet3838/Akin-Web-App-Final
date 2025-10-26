@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalite Kontrol Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --success-color: #22c55e; 
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-dark); 
+            margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); 
+            padding: 0 2rem; 
+            height: 70px; 
+            box-shadow: var(--card-shadow); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        .logo { 
+            font-size: 1.5rem; 
+            font-weight: 600; 
+            text-decoration: none; 
+            color: var(--text-dark); 
+        }
+        .btn { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 0.5rem; 
+            text-decoration: none; 
+            padding: 0.7rem 1.5rem; 
+            border-radius: 0.5rem; 
+            font-weight: 600; 
+            transition: all 0.2s; 
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-dark);
+            cursor: pointer; 
+        }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+
+        .container { 
+            max-width: 1600px; 
+            margin: 2rem auto; 
+            padding: 0 2rem; 
+        }
+        .page-header { 
+            margin-bottom: 2rem; 
+        }
+        .page-header h1 { 
+            font-size: 2.25rem; 
+            font-weight: 700;
+            margin: 0; 
+        }
+        .content-card { 
+            background-color: var(--card-bg); 
+            border-radius: 0.75rem; 
+            padding: 2rem; 
+            box-shadow: var(--card-shadow); 
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+        }
+        .content-card h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; 
+            padding: 0.75rem; 
+            border: 1px solid var(--border-color); 
+            border-radius: 0.5rem; 
+            font-size: 1rem; 
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; white-space: nowrap; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        .action-buttons button { background: none; border: none; font-size: 1.1rem; cursor: pointer; transition: opacity 0.2s;}
+        .action-buttons button:hover { opacity: 0.7; }
+        .action-buttons .delete-btn { color: var(--danger-color); }
+        
+        .status-badge { padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; color: white; }
+        .status-gecti { background-color: var(--success-color); }
+        .status-red { background-color: var(--danger-color); }
+
+        .content-grid { display: grid; grid-template-columns: 420px 1fr; gap: 2rem; align-items: start; }
+
+        @media (max-width: 992px) {
+            .content-grid { grid-template-columns: 1fr; } 
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .content-card { padding: 1.5rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-check-double"></i> Kalite Kontrol</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Kalite Kontrol Yönetimi</h1>
+        </div>
+        <div class="content-grid">
+            <div class="content-card">
+                <h2>Yeni Kalite Kontrol Kaydı</h2>
+                <form id="add-form">
+                    <div class="form-group"><label for="urun_id">Ürün (*)</label><select id="urun_id" required></select></div>
+                    <div class="form-group"><label for="kontrol_tarihi">Kontrol Tarihi (*)</label><input type="date" id="kontrol_tarihi" required></div>
+                    <div class="form-group"><label for="kontrol_eden_personel_id">Kontrol Eden Personel</label><select id="kontrol_eden_personel_id"></select></div>
+                    <div class="form-group"><label for="sonuc">Sonuç (*)</label><select id="sonuc" required><option value="Geçti">Geçti</option><option value="Red">Red</option></select></div>
+                    <div class="form-group"><label for="aciklama">Açıklama</label><textarea id="aciklama" rows="4"></textarea></div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-plus"></i> Kaydı Ekle</button>
+                </form>
+            </div>
+            <div class="content-card">
+                <h2>Mevcut Kayıtlar</h2>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Tarih</th><th>Ürün</th><th>Personel</th><th>Sonuç</th><th>Açıklama</th><th>İşlemler</th></tr></thead>
+                        <tbody id="kayit-listesi"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('add-form'); 
+            const urunSelect = document.getElementById('urun_id');
+            const personelSelect = document.getElementById('kontrol_eden_personel_id');
+            const kayitListesi = document.getElementById('kayit-listesi');
+
+            async function loadDropdowns() {
+                try {
+                    const [urunResponse, personelResponse] = await Promise.all([
+                        fetch('/api/urunler'),
+                        fetch('/api/personel')
+                    ]);
+                    const urunler = await urunResponse.json();
+                    const personelListesi = await personelResponse.json();
+
+                    urunSelect.innerHTML = '<option value="">Ürün Seçiniz...</option>';
+                    urunler.forEach(urun => {
+                        urunSelect.innerHTML += `<option value="${urun.id}">${urun.urun_adi}</option>`;
+                    });
+
+                    personelSelect.innerHTML = '<option value="">Personel Seçiniz...</option>';
+                    personelListesi.forEach(personel => {
+                        personelSelect.innerHTML += `<option value="${personel.id}">${personel.ad_soyad}</option>`;
+                    });
+                } catch (error) {
+                    console.error("Dropdown verileri yüklenemedi:", error);
+                }
+            }
+
+            async function loadKaliteKontrolKayitlari() {
+                 try {
+                    const response = await fetch('/api/kalite-kontrol');
+                    const kayitlar = await response.json();
+                    kayitListesi.innerHTML = '';
+                    if (kayitlar.length === 0) {
+                        kayitListesi.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem;">Kayıt bulunamadı.</td></tr>';
+                        return;
+                    }
+                    kayitlar.forEach(kayit => {
+                        const statusClass = kayit.sonuc === 'Geçti' ? 'status-gecti' : 'status-red';
+                        kayitListesi.innerHTML += `
+                            <tr>
+                                <td>${new Date(kayit.kontrol_tarihi).toLocaleDateString('tr-TR')}</td>
+                                <td>${kayit.urun_adi || '-'}</td>
+                                <td>${kayit.kontrol_eden_personel || '-'}</td>
+                                <td><span class="status-badge ${statusClass}">${kayit.sonuc}</span></td>
+                                <td>${kayit.aciklama || '-'}</td>
+                                <td class="action-buttons"><button class="delete-btn" onclick="deleteKayit(${kayit.id})" title="Sil"><i class="fas fa-trash"></i></button></td>
+                            </tr>
+                        `;
+                    });
+                 } catch (error) {
+                     console.error("Kalite kontrol kayıtları yüklenemedi:", error);
+                     kayitListesi.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem;">Kayıtlar yüklenirken bir hata oluştu.</td></tr>';
+                 }
+            }
+            
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = {
+                    urun_id: parseInt(urunSelect.value),
+                    kontrol_tarihi: document.getElementById('kontrol_tarihi').value,
+                    kontrol_eden_personel_id: parseInt(personelSelect.value) || null,
+                    sonuc: document.getElementById('sonuc').value,
+                    aciklama: document.getElementById('aciklama').value
+                };
+
+                if (!data.urun_id || !data.kontrol_tarihi || !data.sonuc) {
+                    alert('Lütfen zorunlu alanları doldurun.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/kalite-kontrol', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.detail);
+                    
+                    alert(result.message);
+                    form.reset();
+                    await loadKaliteKontrolKayitlari();
+                } catch (err) {
+                    alert('Bir hata oluştu: ' + err.message);
+                }
+            });
+            
+            window.deleteKayit = async function(id) {
+                if (!confirm('Bu kaydı silmek istediğinizden emin misiniz?')) return;
+                try {
+                    const response = await fetch(`/api/kalite-kontrol/${id}`, { method: 'DELETE' });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.detail);
+                    alert(data.message);
+                    await loadKaliteKontrolKayitlari();
+                } catch (err) {
+                    alert('Silme işlemi başarısız: ' + err.message);
+                }
+            }
+            
+            function setDefaultDate() {
+                const today = new Date();
+                const offset = today.getTimezoneOffset();
+                const localDate = new Date(today.getTime() - (offset*60*1000));
+                document.getElementById('kontrol_tarihi').value = localDate.toISOString().split('T')[0];
+            }
+
+            setDefaultDate();
+            loadDropdowns();
+            loadKaliteKontrolKayitlari();
+        });
+    </script>
+</body>
+</html>

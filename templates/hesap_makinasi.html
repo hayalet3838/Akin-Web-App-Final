@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akıllı Hammadde Hesaplayıcı - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --success-color: #22c55e; 
+            --info-color: #0ea5e9;
+            --danger-color: #ef4444;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-dark); 
+            margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); padding: 0 2rem; height: 70px; 
+            box-shadow: var(--card-shadow); display: flex; align-items: center; 
+            justify-content: space-between; position: sticky; top: 0; z-index: 1000; 
+        }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { 
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 0.5rem; text-decoration: none; color: white; padding: 0.7rem 1.5rem; 
+            border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; 
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; color: white; border: 1px solid #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        
+        .content-card { 
+            background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; 
+            box-shadow: var(--card-shadow); border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            max-width: 650px; margin: 0 auto;
+        }
+        .content-card h2 {
+            font-size: 1.5rem; color: var(--text-dark);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input { 
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); 
+            border-radius: 0.5rem; font-size: 1rem; 
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus {
+            outline: none; border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgb(59 130 246 / 0.2);
+        }
+
+        .results-card { 
+            border-left: 5px solid var(--info-color); background-color: #f0f9ff; 
+            padding: 1.5rem; margin-top: 2rem; border-radius: 0.5rem; 
+            display: none;
+        }
+        .results-card h3 { 
+            margin-top: 0; margin-bottom: 1rem; color: #0c4a6e;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .results-card p { margin: 0.75rem 0; font-size: 1.1rem; color: var(--text-dark); display: flex; justify-content: space-between; }
+        .results-card strong { font-weight: 600; }
+        
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .content-card { padding: 1.5rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-calculator"></i> Hammadde Hesaplayıcı</a>
+        <a href="/" class="btn btn-secondary">
+            <i class="fas fa-home"></i> Ana Sayfaya Dön
+        </a>
+    </nav>
+
+    <div class="container">
+        <header class="page-header">
+            <h1>Akıllı Hammadde Hesaplayıcı</h1>
+        </header>
+
+        <div class="content-card">
+            <h2><i class="fas fa-cogs"></i> Üretim İhtiyaç Hesaplama</h2>
+            
+            <div class="form-group">
+                <label for="urunAgirligi">Tek Bir Ürünün Ağırlığı (gram)</label>
+                <input type="number" id="urunAgirligi" placeholder="Örn: 150">
+            </div>
+
+            <div class="form-group">
+                <label for="uretimAdedi">İstenen Üretim Adedi</label>
+                <input type="number" id="uretimAdedi" placeholder="Örn: 5000">
+            </div>
+
+            <div class="form-group">
+                <label for="torbaAgirligi">Hammadde Torbasının Ağırlığı (kg)</label>
+                <input type="number" id="torbaAgirligi" value="25">
+            </div>
+
+            <button id="hesaplaBtn" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-calculator"></i> Hesapla
+            </button>
+
+            <div id="sonucAlani" class="results-card">
+                <h3><i class="fas fa-check-circle"></i> Hesaplama Sonuçları</h3>
+                <p><span>Toplam Hammadde İhtiyacı:</span> <strong id="toplamIhtiyacKg"></strong></p>
+                <p><span>Gereken Minimum Torba Sayısı:</span> <strong id="gerekenTorba"></strong></p>
+                <p><span>Son Torbadan Artacak Malzeme:</span> <strong id="artikMalzeme"></strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urunAgirligiInput = document.getElementById('urunAgirligi');
+            const uretimAdediInput = document.getElementById('uretimAdedi');
+            const torbaAgirligiInput = document.getElementById('torbaAgirligi');
+            const hesaplaBtn = document.getElementById('hesaplaBtn');
+            const sonucAlani = document.getElementById('sonucAlani');
+            
+            const toplamIhtiyacKgText = document.getElementById('toplamIhtiyacKg');
+            const gerekenTorbaText = document.getElementById('gerekenTorba');
+            const artikMalzemeText = document.getElementById('artikMalzeme');
+
+            function hesapla() {
+                const urunGr = parseFloat(urunAgirligiInput.value);
+                const uretimAdet = parseInt(uretimAdediInput.value, 10);
+                const torbaKg = parseFloat(torbaAgirligiInput.value);
+
+                if (isNaN(urunGr) || isNaN(uretimAdet) || isNaN(torbaKg) || urunGr <= 0 || uretimAdet <= 0 || torbaKg <= 0) {
+                    alert('Lütfen tüm alanları geçerli ve pozitif sayılarla doldurun.');
+                    return;
+                }
+
+                const toplamKg = (urunGr * uretimAdet) / 1000;
+                const gerekenTorbaSayisi = Math.ceil(toplamKg / torbaKg);
+                const kullanilacakToplamKg = gerekenTorbaSayisi * torbaKg;
+                const artikMalzemeKg = kullanilacakToplamKg - toplamKg;
+
+                toplamIhtiyacKgText.textContent = `${toplamKg.toFixed(2)} kg`;
+                gerekenTorbaText.textContent = `${gerekenTorbaSayisi} adet`;
+                artikMalzemeText.textContent = `${artikMalzemeKg.toFixed(2)} kg`;
+
+                sonucAlani.style.display = 'block';
+            }
+
+            hesaplaBtn.addEventListener('click', hesapla);
+
+            [urunAgirligiInput, uretimAdediInput, torbaAgirligiInput].forEach(input => {
+                input.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        hesapla();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

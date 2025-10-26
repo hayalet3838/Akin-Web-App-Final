@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelen Faturalar - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --warning-color: #f59e0b;
+            --danger-color: #ef4444; --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        .content-card { background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background-color: #f9fafb; }
+        .text-right { text-align: right !important; }
+        .status-badge { padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; color: white; text-transform: capitalize; }
+        .status-ödendi { background-color: var(--success-color); }
+        .status-ödenmedi { background-color: var(--danger-color); }
+        .status-kismi-ödendi { background-color: var(--warning-color); }
+        .actions button, .actions a { background:none; border:none; color: var(--text-light); margin: 0 0.5rem; text-decoration: none; font-size: 1.1rem; cursor:pointer; padding:0.2rem; transition: color 0.2s; }
+        .actions .pay-btn { color: var(--success-color); font-size: 1rem; border: 1px solid var(--success-color); border-radius: 0.4rem; padding: 0.4rem 0.8rem; font-weight: 600; }
+        .actions .pay-btn:hover { background-color: var(--success-color); color: white; }
+        .actions a:hover, .actions button:hover { color: var(--primary-color); }
+        .actions .delete-btn:hover { color: var(--danger-color); }
+        .empty-state { text-align: center; padding: 4rem 2rem; }
+        .empty-state .icon { font-size: 3.5rem; color: #cbd5e1; margin-bottom: 1.5rem; display: inline-block; }
+        .empty-state p { color: var(--text-light); font-weight: 500; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-file-invoice-dollar"></i> Gelen Faturalar</a>
+        <div>
+            <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfa</a>
+            <a href="/gelen-fatura-ekle" class="btn btn-primary" style="margin-left: 0.5rem;"><i class="fas fa-plus"></i> Yeni Fatura Ekle</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Fatura Listesi</h1>
+        </div>
+        <div class="content-card">
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Tedarikçi</th><th>Fatura No</th><th>Tarih</th>
+                            <th class="text-right">Tutar</th><th>Ödeme Durumu</th>
+                            <th class="text-right">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="faturalar-tablosu"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API_PREFIX = '/api';
+        async function loadFaturalar() {
+            const tbody = document.getElementById('faturalar-tablosu');
+            try {
+                const response = await fetch(`${API_PREFIX}/gelen-faturalar`);
+                const faturalar = await response.json();
+                tbody.innerHTML = '';
+                if (faturalar.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon"><i class="fas fa-inbox"></i></div><p>Henüz kaydedilmiş bir fatura bulunmuyor.</p></div></td></tr>`;
+                    return;
+                }
+                faturalar.forEach(fatura => {
+                    const formattedDate = new Date(fatura.fatura_tarihi).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const formattedTutar = (fatura.genel_toplam || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                    const statusText = (fatura.odeme_durumu || 'bilinmiyor').replace(/ /g, '-');
+                    const slugify = (text) => text.toString().toLowerCase().replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ç/g, 'c').replace(/ğ/g, 'g');
+                    const statusClass = `status-${slugify(statusText)}`;
+                    let odemeButonu = '';
+                    if (fatura.odeme_durumu !== 'Ödendi') {
+                        odemeButonu = `<button class="pay-btn" title="Ödeme Yap" onclick="odemeYap(${fatura.id})"><i class="fas fa-check-circle"></i> Ödeme Yap</button>`;
+                    }
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>#${fatura.id}</strong></td>
+                        <td>${fatura.tedarikci_adi}</td>
+                        <td>${fatura.fatura_numarasi}</td>
+                        <td>${formattedDate}</td>
+                        <td class="text-right">${formattedTutar}</td>
+                        <td><span class="status-badge ${statusClass}">${fatura.odeme_durumu}</span></td>
+                        <td class="actions text-right">
+                            ${odemeButonu}
+                            <a href="/gelen-fatura-detay/${fatura.id}" target="_blank" title="Ön İzleme"><i class="fas fa-eye"></i></a>
+                            <button class="delete-btn" title="Sil" onclick="deleteFatura(${fatura.id})"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Faturalar yüklenemedi:", error);
+                tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon"><i class="fas fa-exclamation-triangle"></i></div><p>Faturalar yüklenirken bir hata oluştu.</p></div></td></tr>`;
+            }
+        }
+        async function deleteFatura(faturaId) {
+            if (!confirm(`#${faturaId} numaralı faturayı ve ilgili finansal işlemi silmek istediğinizden emin misiniz?`)) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/gelen-faturalar/${faturaId}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadFaturalar();
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+        async function odemeYap(faturaId) {
+            if (!confirm(`#${faturaId} numaralı fatura için ödeme kaydı oluşturmak istediğinizden emin misiniz? Bu işlem geri alınamaz.`)) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/gelen-faturalar/${faturaId}/odeme`, { method: 'POST' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadFaturalar();
+            } catch (error) {
+                alert(`Ödeme işlemi sırasında hata: ${error.message}`);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadFaturalar);
+        window.deleteFatura = deleteFatura;
+        window.odemeYap = odemeYap;
+    </script>
+</body>
+</html>

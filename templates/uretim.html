@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Üretim Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Bu bölümdeki CSS kodları öncekiyle aynı, değişiklik yok */
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --warning-color: #f59e0b;
+            --danger-color: #ef4444; --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        
+        .content-card { background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); }
+        .content-card h2 { font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; white-space: nowrap; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        .action-buttons button { background: none; border: none; font-size: 1.2rem; cursor: pointer; margin-right: 1rem; padding: 5px; transition: color 0.2s; }
+        .action-buttons .start-btn { color: var(--success-color); }
+        .action-buttons .complete-btn { color: var(--warning-color); }
+        .action-buttons .delete-btn { color: var(--danger-color); }
+        .action-buttons button:hover { opacity: 0.7; }
+        
+        .content-grid { display: grid; grid-template-columns: 420px 1fr; gap: 2rem; align-items: start; }
+
+        @media (max-width: 992px) { .content-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .content-card { padding: 1.5rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-gears"></i> Üretim Yönetimi</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Üretim Emirleri Paneli</h1>
+        </div>
+        <div class="content-grid">
+            <div class="content-card">
+                <h2>Yeni İş Emri Oluştur</h2>
+                <form id="uretimForm">
+                    <div class="form-group"><label for="isEmriKodu">İş Emri Kodu</label><input type="text" id="isEmriKodu" required></div>
+                    <div class="form-group"><label for="urunSecim">Ürün</label><select id="urunSecim" required></select></div>
+                    <div class="form-group"><label for="hedefMiktar">Hedef Miktar</label><input type="number" id="hedefMiktar" required step="any"></div>
+                    <div class="form-group"><label for="makineSecim">Atanacak Makine</label><select id="makineSecim"></select></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-plus"></i> İş Emri Oluştur</button>
+                </form>
+            </div>
+            <div class="content-card">
+                <h2>Mevcut İş Emirleri</h2>
+                <div style="overflow-x:auto;">
+                    <table id="uretimTablosu">
+                        <thead><tr><th>Kod</th><th>Ürün</th><th>Hedef</th><th>Durum</th><th>Makine</th><th>İşlemler</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API_PREFIX = '/api';
+
+        async function loadPageData() {
+            try {
+                const [emirResponse, urunResponse, makineResponse] = await Promise.all([
+                    fetch(`${API_PREFIX}/uretim-emirleri`),
+                    fetch(`${API_PREFIX}/urunler`),
+                    fetch(`${API_PREFIX}/makineler`)
+                ]);
+                
+                if (!emirResponse.ok || !urunResponse.ok || !makineResponse.ok) throw new Error("API'lerden biri yanıt vermiyor.");
+
+                const emirler = await emirResponse.json();
+                const urunlerList = await urunResponse.json();
+                const makinelerList = await makineResponse.json();
+
+                populateDropdowns(urunlerList, makinelerList);
+                renderTable(emirler);
+            } catch (error) {
+                console.error("Veri yüklenirken hata:", error);
+                alert("Veriler yüklenemedi.");
+            }
+        }
+
+        function populateDropdowns(urunler, makineler) {
+            const urunSecim = document.getElementById('urunSecim');
+            const makineSecim = document.getElementById('makineSecim');
+            
+            urunSecim.innerHTML = '<option value="">Ürün Seç</option>';
+            urunler.forEach(urun => { urunSecim.innerHTML += `<option value="${urun.id}">${urun.urun_adi}</option>`; });
+            
+            makineSecim.innerHTML = '<option value="">Makine Seç (isteğe bağlı)</option>';
+            makineler.forEach(makine => { makineSecim.innerHTML += `<option value="${makine.id}">${makine.makine_adi}</option>`; });
+        }
+
+        function renderTable(emirler) {
+            const tbody = document.getElementById('uretimTablosu').querySelector('tbody');
+            tbody.innerHTML = '';
+            if (emirler.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Kayıtlı üretim emri bulunmamaktadır.</td></tr>';
+                return;
+            }
+            emirler.forEach(emir => {
+                const row = document.createElement('tr');
+                let islemButonlari = '';
+
+                if (emir.durum === 'Bekliyor') {
+                    islemButonlari += `<button class="start-btn" title="Üretimi Başlat" onclick="startUretimEmri(${emir.id})"><i class="fas fa-play"></i></button>`;
+                } else if (emir.durum === 'Üretimde') {
+                    islemButonlari += `<button class="complete-btn" title="Üretimi Tamamla" onclick="completeUretimEmri(${emir.id}, ${emir.urun_id}, ${emir.hedef_miktar})"><i class="fas fa-check"></i></button>`;
+                }
+                
+                // --- DEĞİŞİKLİK BURADA ---
+                // Artık sadece 'Üretimde' olanlar hariç, 'Bekliyor' ve 'Tamamlandı' durumundakiler arşivlenebilir.
+                if (emir.durum !== 'Üretimde') {
+                     islemButonlari += `<button class="delete-btn" title="Arşivle" onclick="deleteUretimEmri(${emir.id})"><i class="fas fa-archive"></i></button>`;
+                }
+
+                row.innerHTML = `
+                    <td><strong>${emir.is_emri_kodu}</strong></td>
+                    <td>${emir.urun_adi}</td>
+                    <td>${emir.hedef_miktar}</td>
+                    <td>${emir.durum}</td>
+                    <td>${emir.makine_adi || 'Atanmadı'}</td>
+                    <td class="action-buttons">${islemButonlari || '<span>-</span>'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function createUretimEmri(event) {
+            event.preventDefault();
+            const form = event.target;
+            const emirData = {
+                is_emri_kodu: form.isEmriKodu.value,
+                urun_id: parseInt(form.urunSecim.value),
+                hedef_miktar: parseFloat(form.hedefMiktar.value),
+                atanan_makine_id: form.makineSecim.value ? parseInt(form.makineSecim.value) : null
+            };
+            try {
+                const response = await fetch(`${API_PREFIX}/uretim-emirleri`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(emirData)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                form.reset();
+                await loadPageData();
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+        
+        async function deleteUretimEmri(emirId) {
+            if (!confirm("Bu üretim emrini ARŞİVLEMEK istediğinizden emin misiniz? Kayıt silinmeyecek, sadece listeden gizlenecektir.")) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/uretim-emirleri/${emirId}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadPageData();
+            } catch (error) {
+                alert(`Arşivleme işlemi başarısız: ${error.message}`);
+            }
+        }
+
+        async function startUretimEmri(emirId) {
+            if (!confirm("Bu üretim emrini başlatmak istediğinizden emin misiniz?")) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/uretim-emirleri/${emirId}/baslat`, { method: 'PUT' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadPageData();
+            } catch (error) {
+                alert(`Başlatma işlemi başarısız: ${error.message}`);
+            }
+        }
+
+        async function completeUretimEmri(emirId, urunId, hedefMiktar) {
+            const uretilenMiktarStr = prompt(`Üretilen miktarı giriniz (Hedef: ${hedefMiktar}):`);
+            if (uretilenMiktarStr === null) return;
+            const uretilenMiktar = parseFloat(uretilenMiktarStr);
+            if (isNaN(uretilenMiktar) || uretilenMiktar < 0) {
+                alert('Geçerli bir miktar girmelisiniz.');
+                return;
+            }
+            if (!confirm(`Üretim emrini ${uretilenMiktar} miktar ile tamamlamak istediğinizden emin misiniz?`)) return;
+
+            const data = { uretilen_miktar: uretilenMiktar, urun_id: urunId };
+            try {
+                const response = await fetch(`${API_PREFIX}/uretim-emirleri/${emirId}/tamamla`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail || result.message);
+                alert(result.message);
+                await loadPageData();
+            } catch (error) {
+                alert(`Tamamlama işlemi başarısız: ${error.message}`);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPageData();
+            document.getElementById('uretimForm').addEventListener('submit', createUretimEmri);
+            
+            window.deleteUretimEmri = deleteUretimEmri;
+            window.startUretimEmri = startUretimEmri;
+            window.completeUretimEmri = completeUretimEmri;
+        });
+    </script>
+</body>
+</html>

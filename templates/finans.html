@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Cari Finans Yönetimi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --border-color: #e2e8f0; 
+            --card-bg: #fff; --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --danger-color: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: white; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: none; cursor: pointer; }
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-success { background-color: var(--success-color); }
+        .btn-secondary { background-color: #e2e8f0; color: var(--text-dark); }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; margin: 0; }
+        .tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: -1px; }
+        .tab-link { padding: 1rem 1.5rem; border: none; background: none; cursor: pointer; font-size: 1.1rem; font-weight: 600; color: var(--text-light); border-bottom: 3px solid transparent; }
+        .tab-link.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .content-card { background-color: var(--card-bg); padding: 2rem; border-radius: 0.75rem; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); margin-bottom: 2rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: #f8fafc; font-weight: 600; }
+        .text-right { text-align: right; }
+        .action-buttons button { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--danger-color); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-content { background-color: var(--card-bg); padding: 2rem; border-radius: 0.75rem; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { margin: 0; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 1rem; }
+        .form-group label { font-weight: 500; margin-bottom: 0.5rem; }
+        .form-group input, .form-group select, .form-group textarea { padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; }
+        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content:flex-end; }
+        .bakiye-pozitif { color: var(--danger-color); font-weight: 600; }
+        .bakiye-negatif { color: var(--success-color); font-weight: 600; }
+        .clickable-row { cursor: pointer; }
+        .clickable-row:hover { background-color: #f9fafb; }
+        .selected-row { background-color: #eff6ff; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-landmark"></i> Cari Finans Yönetimi</a>
+        <a href="/" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Cari Hesaplar</h1>
+            <div>
+                <button id="yeniTahsilatBtn" class="btn btn-success"><i class="fas fa-plus"></i> Yeni Tahsilat Ekle</button>
+                <button id="yeniOdemeBtn" class="btn btn-success" style="display: none;"><i class="fas fa-plus"></i> Yeni Ödeme Ekle</button>
+            </div>
+        </div>
+        <div class="tabs">
+            <button class="tab-link active" data-tab="musteri-finans">Müşteri Finans</button>
+            <button class="tab-link" data-tab="tedarikci-finans">Tedarikçi Finans</button>
+        </div>
+        <div id="musteri-finans" class="tab-content active">
+            <div class="content-card" style="border-radius: 0 0.75rem 0.75rem 0.75rem; border-top:none;">
+                <h2>Müşteri Cari Hesapları (Özet için bir müşteriye tıklayın)</h2>
+                <table id="musteriBakiyeTablosu">
+                    <thead><tr><th>CARİ ADI</th><th class="text-right">BAKİYE</th><th class="text-right">İŞLEMLER</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="tedarikci-finans" class="tab-content">
+            <div class="content-card" style="border-radius: 0 0.75rem 0.75rem 0.75rem; border-top:none;">
+                 <h2>Tedarikçi Cari Hesapları (Özet için bir tedarikçiye tıklayın)</h2>
+                <table id="tedarikciBakiyeTablosu">
+                    <thead><tr><th>CARİ ADI</th><th class="text-right">BAKİYE</th><th class="text-right">İŞLEMLER</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="content-card" id="hesapOzetiKarti" style="display:none;">
+            </div>
+    </div>
+    <div id="tahsilatModal" class="modal-overlay"> ... </div>
+    <div id="odemeModal" class="modal-overlay"> ... </div>
+
+    <script>
+        const API_PREFIX = '/api';
+
+        // ... loadAllData, populateDropdowns fonksiyonları aynı kalıyor ...
+
+        function renderMusteriBakiyeleri(bakiyeler) {
+            const tbody = document.getElementById('musteriBakiyeTablosu').querySelector('tbody');
+            tbody.innerHTML = '';
+            bakiyeler.forEach(m => {
+                const bakiye = parseFloat(m.bakiye);
+                const bakiyeClass = bakiye > 0 ? 'bakiye-pozitif' : (bakiye < 0 ? 'bakiye-negatif' : '');
+                const bakiyeText = bakiye.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                const row = document.createElement('tr');
+                row.className = 'clickable-row';
+                row.dataset.id = m.id;
+                row.dataset.name = m.ad;
+                row.dataset.type = 'musteri';
+                row.innerHTML = `
+                    <td><strong>${m.ad}</strong></td>
+                    <td class="text-right ${bakiyeClass}">${bakiyeText}</td>
+                    <td class="action-buttons text-right">
+                        <button onclick="deleteCari('musteri', ${m.id})"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function renderTedarikciBakiyeleri(bakiyeler) {
+            const tbody = document.getElementById('tedarikciBakiyeTablosu').querySelector('tbody');
+            tbody.innerHTML = '';
+            bakiyeler.forEach(t => {
+                const bakiye = parseFloat(t.bakiye);
+                const bakiyeClass = bakiye > 0 ? 'bakiye-pozitif' : (bakiye < 0 ? 'bakiye-negatif' : '');
+                const bakiyeText = bakiye.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                const row = document.createElement('tr');
+                row.className = 'clickable-row';
+                row.dataset.id = t.id;
+                row.dataset.name = t.firma_adi;
+                row.dataset.type = 'tedarikci';
+                row.innerHTML = `
+                    <td><strong>${t.firma_adi}</strong></td>
+                    <td class="text-right ${bakiyeClass}">${bakiyeText}</td>
+                    <td class="action-buttons text-right">
+                        <button onclick="deleteCari('tedarikci', ${t.id})"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // YENİ: Tek bir silme fonksiyonu
+        async function deleteCari(cariTipi, cariId) {
+            const endpoint = cariTipi === 'musteri' ? 'musteriler' : 'tedarikciler';
+            if (!confirm(`Bu ${cariTipi} kaydını silmek istediğinizden emin misiniz?`)) return;
+
+            try {
+                const response = await fetch(`${API_PREFIX}/${endpoint}/${cariId}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail);
+                }
+                alert('Kayıt başarıyla silindi.');
+                await loadAllData(); // Tüm listeleri yenile
+                document.getElementById('hesapOzetiKarti').style.display = 'none'; // Açıksa hesap özetini kapat
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+
+        // ... getHesapOzeti ve diğer fonksiyonlar aynı kalıyor ...
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... mevcut kodlar ...
+            
+            // Silme fonksiyonunu global scope'a taşı
+            window.deleteCari = deleteCari;
+        });
+    </script>
+</body>
+</html>

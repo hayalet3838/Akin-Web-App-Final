@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stok Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --warning-color: #f59e0b;
+            --danger-color: #ef4444; --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+        .btn-success { background-color: var(--success-color); color: white; border-color: var(--success-color); }
+        .btn-success:hover { background-color: #16a34a; }
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        .tabs { display: flex; border-bottom: 2px solid var(--border-color); }
+        .tab-link { padding: 1rem 1.5rem; border: none; background: none; cursor: pointer; font-size: 1.1rem; font-weight: 600; color: var(--text-light); border-bottom: 4px solid transparent; transition: color 0.2s, border-color 0.2s; }
+        .tab-link:hover { color: var(--text-dark); }
+        .tab-link.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .content-card { background-color: var(--card-bg); padding: 2rem; border-radius: 0 0.75rem 0.75rem 0.75rem; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: #f8fafc; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; color: var(--text-light); }
+        tbody tr:last-child td { border-bottom: none; }
+        .action-buttons button { background: none; border: none; font-size: 1.1rem; cursor: pointer; margin: 0 0.3rem; color: var(--text-light); transition: color 0.2s; }
+        .action-buttons .edit-btn:hover { color: var(--primary-color); }
+        .action-buttons .delete-btn:hover { color: var(--danger-color); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background-color: var(--card-bg); border-radius: 1rem; padding: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 90%; max-width: 550px; transform: scale(0.95); transition: transform 0.3s ease; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; border: none; padding: 0; }
+        .close-btn { background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--text-light); transition: color 0.2s; }
+        .close-btn:hover { color: var(--text-dark); }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem; }
+        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: flex-end; }
+        @media (max-width: 768px) { .container { padding: 0 1rem; margin: 1.5rem auto; } .page-header h1 { font-size: 1.75rem; } .top-nav { padding: 0 1rem; } .logo { font-size: 1.2rem; } }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-boxes-stacked"></i> Stok Yönetimi</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Stok Durumu</h1>
+            <div>
+                <button id="yeniUrunBtn" class="btn btn-success"><i class="fas fa-plus"></i> Yeni Ürün Ekle</button>
+                <button id="yeniHammaddeBtn" class="btn btn-success" style="display: none;"><i class="fas fa-plus"></i> Yeni Hammadde Ekle</button>
+            </div>
+        </div>
+        <div class="tabs">
+            <button class="tab-link active" data-tab="urunler">Ürün Stokları</button>
+            <button class="tab-link" data-tab="hammaddeler">Hammadde Stokları</button>
+        </div>
+        <div id="urunler" class="tab-content active">
+            <div class="content-card">
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>KOD</th>
+                                <th>AD</th>
+                                <th>MİKTAR</th>
+                                <th>BİRİM FİYATI</th>
+                                <th>İŞLEMLER</th>
+                            </tr>
+                        </thead>
+                        <tbody id="urunTablosu-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="hammaddeler" class="tab-content">
+            <div class="content-card">
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead><tr><th>KOD</th><th>AD</th><th>MİKTAR</th><th>KRİTİK SEVİYE</th><th>BİRİM</th><th>İŞLEMLER</th></tr></thead>
+                        <tbody id="hammaddeTablosu-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="urunModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="urunModalBaslik">Yeni Ürün Ekle</h2>
+                <button class="close-btn" data-modal="urunModal">&times;</button>
+            </div>
+            <form id="urunForm">
+                <input type="hidden" id="editUrunId">
+                <div class="form-group"><label>Ürün Kodu</label><input type="text" id="urunKodu" required></div>
+                <div class="form-group"><label>Ürün Adı</label><input type="text" id="urunAdi" required></div>
+                <div class="form-group"><label>Stok Miktarı</label><input type="number" id="urunStokMiktari" value="0" step="any"></div>
+                <div class="form-group"><label>Birim Fiyatı (₺)</label><input type="number" id="urunBirimFiyati" value="0.00" step="0.01" placeholder="Örn: 125.50"></div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary close-btn" data-modal="urunModal">İptal</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="hammaddeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="hammaddeModalBaslik">Yeni Hammadde Ekle</h2>
+                <button class="close-btn" data-modal="hammaddeModal">&times;</button>
+            </div>
+            <form id="hammaddeForm">
+                <input type="hidden" id="editHammaddeId">
+                <div class="form-group"><label>Hammadde Kodu</label><input type="text" id="hammaddeKodu" required></div>
+                <div class="form-group"><label>Hammadde Adı</label><input type="text" id="hammaddeAdi" required></div>
+                <div class="form-group"><label>Stok Miktarı</label><input type="number" id="hammaddeStokMiktari" value="0" step="any"></div>
+                <div class="form-group"><label>Kritik Stok Seviyesi</label><input type="number" id="kritikStokSeviyesi" value="0" step="any"></div>
+                <div class="form-group"><label>Birim</label><input type="text" id="hammaddeBirim" placeholder="kg, adet, litre vb."></div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary close-btn" data-modal="hammaddeModal">İptal</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_PREFIX = '/api';
+
+        async function loadData() {
+            try {
+                const [urunResponse, hammaddeResponse] = await Promise.all([
+                    fetch(`${API_PREFIX}/urunler`),
+                    fetch(`${API_PREFIX}/hammaddeler`)
+                ]);
+                if (!urunResponse.ok || !hammaddeResponse.ok) throw new Error('Veri sunucudan alınamadı.');
+                const urunlerList = await urunResponse.json();
+                const hammaddelerList = await hammaddeResponse.json();
+                renderUrunler(urunlerList);
+                renderHammaddeler(hammaddelerList);
+            } catch (error) {
+                console.error("Veri yüklenirken hata:", error);
+                alert("Veriler yüklenirken bir hata oluştu.");
+            }
+        }
+        
+        function renderUrunler(urunlerList) {
+            const tbody = document.getElementById('urunTablosu-tbody');
+            tbody.innerHTML = '';
+            if (urunlerList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">Kayıtlı ürün bulunmamaktadır.</td></tr>';
+                return;
+            }
+            
+            urunlerList.forEach(u => {
+                const birimFiyatFormatted = (u.birim_fiyat != null ? parseFloat(u.birim_fiyat) : 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${u.urun_kodu}</strong></td>
+                        <td>${u.urun_adi}</td>
+                        <td>${u.stok_miktari}</td>
+                        <td>${birimFiyatFormatted}</td>
+                        <td class="action-buttons">
+                            <button class="edit-btn" title="Düzenle" onclick='editUrun(${JSON.stringify(u)})'><i class="fas fa-pencil"></i></button>
+                            <button class="delete-btn" title="Sil" onclick="deleteUrun(${u.id})"><i class="fas fa-trash-can"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function renderHammaddeler(hammaddelerList) {
+            const tbody = document.getElementById('hammaddeTablosu-tbody');
+            tbody.innerHTML = '';
+            if (hammaddelerList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Kayıtlı hammadde bulunmamaktadır.</td></tr>';
+                return;
+            }
+
+            hammaddelerList.forEach(h => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${h.hammadde_kodu}</strong></td>
+                        <td>${h.hammadde_adi}</td>
+                        <td>${h.stok_miktari}</td>
+                        <td>${h.kritik_stok_seviyesi}</td>
+                        <td>${h.birim}</td>
+                        <td class="action-buttons">
+                            <button class="edit-btn" title="Düzenle" onclick='editHammadde(${JSON.stringify(h)})'><i class="fas fa-pencil"></i></button>
+                            <button class="delete-btn" title="Sil" onclick="deleteHammadde(${h.id})"><i class="fas fa-trash-can"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        async function createOrUpdateUrun(event) {
+            event.preventDefault();
+            const id = document.getElementById('editUrunId').value;
+            const urunData = {
+                urun_kodu: document.getElementById('urunKodu').value,
+                urun_adi: document.getElementById('urunAdi').value,
+                stok_miktari: parseFloat(document.getElementById('urunStokMiktari').value) || 0,
+                birim_fiyat: parseFloat(document.getElementById('urunBirimFiyati').value) || 0
+            };
+            const url = id ? `${API_PREFIX}/urunler/${id}` : `${API_PREFIX}/urunler`;
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(urunData) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                closeModal('urunModal');
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+        
+        async function createOrUpdateHammadde(event) {
+            event.preventDefault();
+            const id = document.getElementById('editHammaddeId').value;
+            const hammaddeData = { 
+                hammadde_kodu: document.getElementById('hammaddeKodu').value, 
+                hammadde_adi: document.getElementById('hammaddeAdi').value, 
+                stok_miktari: parseFloat(document.getElementById('hammaddeStokMiktari').value) || 0, 
+                kritik_stok_seviyesi: parseFloat(document.getElementById('kritikStokSeviyesi').value) || 0,
+                birim: document.getElementById('hammaddeBirim').value 
+            };
+            const url = id ? `${API_PREFIX}/hammaddeler/${id}` : `${API_PREFIX}/hammaddeler`;
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(hammaddeData) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                closeModal('hammaddeModal');
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+
+        function editUrun(urun) { 
+            document.getElementById('urunForm').reset();
+            document.getElementById('urunModalBaslik').textContent = 'Ürünü Düzenle'; 
+            document.getElementById('editUrunId').value = urun.id; 
+            document.getElementById('urunKodu').value = urun.urun_kodu; 
+            document.getElementById('urunAdi').value = urun.urun_adi; 
+            document.getElementById('urunStokMiktari').value = urun.stok_miktari;
+            document.getElementById('urunBirimFiyati').value = urun.birim_fiyat || 0.00;
+            openModal('urunModal');
+        }
+
+        async function deleteUrun(id) { 
+            if (!confirm("Bu ürünü silmek istediğinizden emin misiniz?")) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/urunler/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+        
+        function editHammadde(hammadde) { 
+            document.getElementById('hammaddeForm').reset();
+            document.getElementById('hammaddeModalBaslik').textContent = 'Hammaddeyi Düzenle'; 
+            document.getElementById('editHammaddeId').value = hammadde.id; 
+            document.getElementById('hammaddeKodu').value = hammadde.hammadde_kodu; 
+            document.getElementById('hammaddeAdi').value = hammadde.hammadde_adi; 
+            document.getElementById('hammaddeStokMiktari').value = hammadde.stok_miktari; 
+            document.getElementById('kritikStokSeviyesi').value = hammadde.kritik_stok_seviyesi;
+            document.getElementById('hammaddeBirim').value = hammadde.birim; 
+            openModal('hammaddeModal');
+        }
+
+        async function deleteHammadde(id) {
+            if (!confirm("Bu hammaddeyi silmek istediğinizden emin misiniz?")) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/hammaddeler/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+        
+        function openModal(modalId) { document.getElementById(modalId).classList.add('active'); }
+        function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+
+        // DÜZELTME: Script'in bu bölümü restore edildi.
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('urunForm').addEventListener('submit', createOrUpdateUrun);
+            document.getElementById('hammaddeForm').addEventListener('submit', createOrUpdateHammadde);
+            
+            loadData();
+            
+            const tabs = document.querySelectorAll('.tab-link');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const yeniUrunBtn = document.getElementById('yeniUrunBtn');
+            const yeniHammaddeBtn = document.getElementById('yeniHammaddeBtn');
+
+            function switchTab(tabName) {
+                tabContents.forEach(content => content.classList.remove('active'));
+                tabs.forEach(tab => tab.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+                document.querySelector(`.tab-link[data-tab="${tabName}"]`).classList.add('active');
+                yeniUrunBtn.style.display = tabName === 'urunler' ? 'inline-flex' : 'none';
+                yeniHammaddeBtn.style.display = tabName === 'hammaddeler' ? 'inline-flex' : 'none';
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+            
+            yeniUrunBtn.addEventListener('click', () => {
+                document.getElementById('urunForm').reset();
+                document.getElementById('editUrunId').value = '';
+                document.getElementById('urunModalBaslik').textContent = 'Yeni Ürün Ekle';
+                openModal('urunModal');
+
+            });
+            
+            yeniHammaddeBtn.addEventListener('click', () => {
+                document.getElementById('hammaddeForm').reset();
+                document.getElementById('editHammaddeId').value = '';
+                document.getElementById('hammaddeModalBaslik').textContent = 'Yeni Hammadde Ekle';
+                openModal('hammaddeModal');
+            });
+
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.addEventListener('click', () => closeModal(btn.dataset.modal));
+            });
+            
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', e => { if (e.target === modal) closeModal(modal.id); });
+            });
+
+            window.editUrun = editUrun;
+            window.deleteUrun = deleteUrun;
+            window.editHammadde = editHammadde;
+            window.deleteHammadde = deleteHammadde;
+        });
+    </script>
+</body>
+</html>

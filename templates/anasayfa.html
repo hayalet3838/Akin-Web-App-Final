@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Düğmeci Makina - Entegrasyon Paneli</title>
+
+    <link rel="manifest" href="/static/manifest.json?v=3">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --nav-bg: #ffffff; --main-bg: #f1f5f9; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --border-color: #e2e8f0; --card-bg: #fff;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --production-color: #ef4444; --stock-color: #22c55e; --sales-color: #eab308;
+            --finance-color: #3b82f6; --recipe-color: #9333ea; --personel-color: #c084fc;
+            --rapor-color: #6d28d9; --customer-color: #f97316; --settings-color: #64748b;
+            --pdks-color: #14b8a6;
+            --maas-color: #84cc16;
+            --quality-color: #16a34a; --energy-color: #ff9900; --crm-color: #94a3b8;
+            --mrp-color: #0ea5e9;
+            --sevkiyat-color: #f472b6;
+            --satin-alma-color: #a78bfa;
+            --portal-color: #2dd4bf;
+            --usd-color: #22c55e;
+            --eur-color: #3b82f6;
+            --calculator-color: #f97316;
+            /* YENİ: Teklifler için renk */
+            --teklif-color: #8b5cf6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); }
+        .dashboard-container { display: flex; flex-direction: column; min-height: 100vh; }
+        .top-nav { background-color: var(--nav-bg); padding: 0 2rem; height: 70px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; }
+        .nav-left { display: flex; align-items: center; }
+        .logo { font-size: 1.4rem; font-weight: 700; color: var(--text-dark); text-decoration: none; margin-right: 2.5rem; }
+        .nav-links { display: flex; align-items: center; gap: 0.75rem; }
+        .nav-links a { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; font-weight: 600; padding: 0.6rem 1rem; border-radius: 0.5rem; color: #fff; transition: transform 0.2s ease, box-shadow 0.2s ease; border-bottom: 3px solid rgba(0,0,0,0.2); }
+        .nav-links a:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .nav-links a.uretim-btn { background-color: var(--production-color); }
+        .nav-links a.stok-btn { background-color: var(--stock-color); }
+        .nav-links a.kaliplar-btn { background-color: var(--recipe-color); }
+        .nav-links a.ayarlar-btn { background-color: var(--settings-color); }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .date-info { font-size: 1rem; font-weight: 600; color: var(--text-dark); white-space: nowrap; }
+        .currency-rates { display: flex; gap: 1rem; font-weight: 600; font-size: 1rem; background-color: #f8fafc; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border-color); }
+        .content { flex: 1; padding: 2rem; padding-top: 90px; }
+        .main-header { margin-bottom: 2rem; }
+        .main-header h1 { color: var(--text-dark); margin: 0; }
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .summary-card { background-color: var(--card-bg); border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 2px 4px var(--shadow-light); }
+        .summary-card-icon { font-size: 1.5rem; margin-bottom: 1rem; display: block; }
+        .summary-card h3 { font-size: 1rem; color: var(--text-light); margin: 0; }
+        .summary-card-value { font-size: 2rem; font-weight: 700; color: var(--text-dark); margin-top: 0.5rem; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .menu-box { background-color: var(--card-bg); border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 2px 4px var(--shadow-light); display: flex; align-items: center; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
+        .menu-box:hover { transform: translateY(-5px); box-shadow: 0 4px 8px var(--shadow-light); }
+        .menu-box .card-icon { font-size: 2.5rem; margin-right: 1.5rem; width: 48px; text-align: center; }
+        .menu-box .card-content h2 { font-size: 1.1rem; margin: 0 0 0.25rem 0; color: var(--text-dark); }
+        .menu-box .card-content p { font-size: 0.875rem; color: var(--text-light); margin: 0; }
+        /* Kart Renkleri */
+        .summary-card.production .summary-card-icon, .menu-box[href="/uretim"] .card-icon { color: var(--production-color); }
+        .summary-card.stock .summary-card-icon, .menu-box[href="/stok"] .card-icon { color: var(--stock-color); }
+        .summary-card.sales .summary-card-icon, .menu-box[href="/satis"] .card-icon, .menu-box[href="/satis-fisleri"] .card-icon { color: var(--sales-color); }
+        .summary-card.finance .summary-card-icon, .menu-box[href="/gelir-gider"] .card-icon, .menu-box[href="/finans"] .card-icon, .menu-box[href="/gelen-faturalar"] .card-icon { color: var(--finance-color); }
+        .menu-box[href="/crm"] .card-icon { color: var(--crm-color); }
+        .menu-box[href="/recete"] .card-icon { color: var(--recipe-color); }
+        .menu-box[href="/personel"] .card-icon { color: var(--personel-color); }
+        .menu-box[href="/maas"] .card-icon { color: var(--maas-color); }
+        .menu-box[href="/pdks"] .card-icon { color: var(--pdks-color); }
+        .menu-box[href="/raporlama"] .card-icon { color: var(--rapor-color); }
+        .menu-box[href="/hesap-makinasi"] .card-icon { color: var(--calculator-color); }
+        .menu-box[href="/enerji"] .card-icon { color: var(--energy-color); }
+        .menu-box[href="/izlenebilirlik"] .card-icon { color: var(--customer-color); }
+        .menu-box[href="/kaliplar"] .card-icon { color: var(--recipe-color); }
+        .menu-box[href="/kalite-kontrol"] .card-icon { color: var(--quality-color); }
+        .menu-box[href="/ayarlar"] .card-icon { color: var(--settings-color); }
+        .menu-box[href="/planlama"] .card-icon { color: var(--mrp-color); }
+        .menu-box[href="/sevkiyat"] .card-icon { color: var(--sevkiyat-color); }
+        .menu-box[href="/satin-alma"] .card-icon { color: var(--satin-alma-color); }
+        .menu-box[href="/yonetici-dashboard"] .card-icon { color: var(--rapor-color); }
+        .menu-box[href="/teklifler"] .card-icon { color: var(--teklif-color); }
+        footer { padding: 2rem; text-align: center; color: var(--text-light); margin-top: auto; }
+        @media (max-width: 1080px) { .nav-links { display: none; } }
+        @media (max-width: 768px) { .top-nav { height: auto; padding: 0.75rem 1rem; flex-direction: column; gap: 0.75rem; } .content { padding: 1rem; padding-top: 140px; } .logo { margin-right: 0; } }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="top-nav">
+            <div class="nav-left">
+                <a href="/" class="logo">Düğmeci Makina</a>
+                <div class="nav-links">
+                    <a href="/uretim" class="uretim-btn"><i class="fas fa-gears"></i> Üretim</a>
+                    <a href="/stok" class="stok-btn"><i class="fas fa-boxes"></i> Stok</a>
+                    <a href="/kaliplar" class="kaliplar-btn"><i class="fas fa-cubes"></i> Kalıplar</a>
+                    <a href="/ayarlar" class="ayarlar-btn"><i class="fas fa-cog"></i> Ayarlar</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="currency-rates" id="currencyRates"><span>Yükleniyor...</span></div>
+                <div class="date-info" id="currentDateTime"></div>
+            </div>
+        </nav>
+        <main class="content">
+            <header class="main-header"><h1>Entegrasyon Paneli</h1></header>
+            <section class="summary-cards">
+                <div class="summary-card production"><i class="fas fa-industry summary-card-icon"></i><h3>Aktif Üretim Emirleri</h3><span class="summary-card-value" id="aktif-uretim-value">0</span></div>
+                <div class="summary-card stock"><i class="fas fa-boxes summary-card-icon"></i><h3>Kritik Stok Uyarısı</h3><span class="summary-card-value" id="kritik-stok-value">0</span></div>
+                <div class="summary-card sales"><i class="fas fa-shopping-cart summary-card-icon"></i><h3>Bekleyen Siparişler</h3><span class="summary-card-value" id="bekleyen-siparis-value">0</span></div>
+                <div class="summary-card finance"><i class="fas fa-chart-line summary-card-icon"></i><h3>Bugünkü Üretim Adeti</h3><span class="summary-card-value" id="bugunku-uretim-value">0</span></div>
+            </section>
+            <section class="menu-grid">
+                <a href="/uretim" class="menu-box"><i class="fas fa-gears card-icon"></i><div class="card-content"><h2>Üretim Yönetimi</h2><p>Üretim emirlerini ve planlamayı yönetin.</p></div></a>
+                <a href="/planlama" class="menu-box"><i class="fas fa-brain card-icon"></i><div class="card-content"><h2>Akıllı Planlama (MRP)</h2><p>Sipariş ve stoklara göre üretim planı oluşturun.</p></div></a>
+                <a href="/stok" class="menu-box"><i class="fas fa-boxes card-icon"></i><div class="card-content"><h2>Stok Yönetimi</h2><p>Hammadde ve ürün stoklarınızı takip edin.</p></div></a>
+                <a href="/satis" class="menu-box"><i class="fas fa-file-invoice-dollar card-icon"></i><div class="card-content"><h2>Satış Yönetimi</h2><p>Müşteri siparişlerini oluşturun ve yönetin.</p></div></a>
+                
+                <a href="/teklifler" class="menu-box">
+                    <i class="fas fa-file-signature card-icon"></i>
+                    <div class="card-content">
+                        <h2>Teklif Yönetimi</h2>
+                        <p>Müşterilerinize profesyonel teklifler hazırlayın.</p>
+                    </div>
+                </a>
+
+                <a href="/satis-fisleri" class="menu-box"><i class="fas fa-receipt card-icon"></i><div class="card-content"><h2>Satış Fişleri / Sipariş Listesi</h2><p>Oluşturulan tüm satış fişlerini listeleyin.</p></div></a>
+                <a href="/sevkiyat" class="menu-box"><i class="fas fa-truck-fast card-icon"></i><div class="card-content"><h2>Sevkiyat Yönetimi</h2><p>Sipariş teslimatlarını ve sevkiyatları planlayın.</p></div></a>
+                <a href="/satin-alma" class="menu-box"><i class="fas fa-dolly card-icon"></i><div class="card-content"><h2>Satın Alma Yönetimi</h2><p>Tedarikçi siparişlerini ve alımları yönetin.</p></div></a>
+                <a href="/crm" class="menu-box"><i class="fas fa-address-book card-icon"></i><div class="card-content"><h2>CRM / Cari Yönetimi</h2><p>Müşteri ve tedarikçi bilgilerini yönetin.</p></div></a>
+                <a href="/finans" class="menu-box"><i class="fas fa-landmark card-icon"></i><div class="card-content"><h2>Cari Finans Yönetimi</h2><p>Müşteri ve tedarikçi finansal durumları.</p></div></a>
+                <a href="/gelir-gider" class="menu-box"><i class="fas fa-sack-dollar card-icon"></i><div class="card-content"><h2>Gelir-Gider Yönetimi</h2><p>Genel gelir ve giderlerinizi takip edin.</p></div></a>
+                <a href="/gelen-faturalar" class="menu-box"><i class="fas fa-file-import card-icon"></i><div class="card-content"><h2>Gelen Faturalar</h2><p>Tedarikçilerden gelen faturaları yönetin.</p></div></a>
+                <a href="/recete" class="menu-box"><i class="fas fa-flask card-icon"></i><div class="card-content"><h2>Ürün Reçeteleri</h2><p>Ürünlerin üretim reçetelerini oluşturun.</p></div></a>
+                <a href="/personel" class="menu-box"><i class="fas fa-users card-icon"></i><div class="card-content"><h2>Personel Yönetimi</h2><p>Personel bilgilerini ve özlük haklarını yönetin.</p></div></a>
+                <a href="/maas" class="menu-box"><i class="fas fa-money-check-alt card-icon"></i><div class="card-content"><h2>Maaş Yönetimi</h2><p>Personel maaşlarını ve bordroları oluşturun.</p></div></a>
+                <a href="/pdks" class="menu-box"><i class="fas fa-clock card-icon"></i><div class="card-content"><h2>PDKS</h2><p>Personel devam kontrol sistemini yönetin.</p></div></a>
+                
+                <a href="/raporlama" class="menu-box"><i class="fas fa-chart-bar card-icon"></i><div class="card-content"><h2>Genel Raporlama</h2><p>Fabrika verilerini raporlayın ve analiz edin.</p></div></a>
+                <a href="/hesap-makinasi" class="menu-box"><i class="fas fa-calculator card-icon"></i><div class="card-content"><h2>Akıllı Hesap Makinası</h2><p>Gelişmiş hesaplamalar ve analizler yapın.</p></div></a>
+                <a href="/enerji" class="menu-box"><i class="fas fa-bolt card-icon"></i><div class="card-content"><h2>Enerji Yönetimi</h2><p>Enerji tüketimini anlık takip edin.</p></div></a>
+                <a href="/izlenebilirlik" class="menu-box"><i class="fas fa-barcode card-icon"></i><div class="card-content"><h2>İzlenebilirlik</h2><p>Hammadde lotlarını ve parti takibini yapın.</p></div></a>
+                <a href="/kaliplar" class="menu-box"><i class="fas fa-cubes card-icon"></i><div class="card-content"><h2>Kalıp Yönetimi</h2><p>Üretim kalıplarınızı ve ömürlerini takip edin.</p></div></a>
+                <a href="/kalite-kontrol" class="menu-box"><i class="fas fa-check-double card-icon"></i><div class="card-content"><h2>Kalite Kontrol</h2><p>Üretim kalitesini ve test sonuçlarını yönetin.</p></div></a>
+                <a href="/yonetici-dashboard" class="menu-box"><i class="fas fa-chart-pie card-icon"></i><div class="card-content"><h2>Yönetici Paneli</h2><p>Fabrikanın anlık durumunu ve KPI'ları görüntüleyin.</p></div></a>
+                <a href="/ayarlar" class="menu-box"><i class="fas fa-cog card-icon"></i><div class="card-content"><h2>Sistem Ayarları</h2><p>Uygulama parametrelerini ve ayarları yönetin.</p></div></a>
+            </section>
+        </main>
+        <footer><p>&copy; 2025 Düğmeci Makina. Tüm Hakları Saklıdır.</p></footer>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/api/dashboard/summary').then(res => res.json()).then(data => {
+                document.getElementById('aktif-uretim-value').innerText = data.aktif_uretim_emri_sayisi;
+                document.getElementById('bugunku-uretim-value').innerText = data.bugunku_uretim_adeti;
+                document.getElementById('kritik-stok-value').innerText = data.kritik_stok_uyarisi_sayisi;
+                document.getElementById('bekleyen-siparis-value').innerText = data.bekleyen_satis_siparis_sayisi;
+            }).catch(error => console.error('Dashboard verileri alınamadı:', error));
+            
+            function updateDateTime() {
+                const now = new Date();
+                const date = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getFullYear()}`;
+                const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                document.getElementById('currentDateTime').innerText = `${date} ${time}`;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            function loadCurrencyRates() {
+                fetch('/api/doviz-kurlari').then(res => res.json()).then(data => {
+                    const ratesDiv = document.getElementById('currencyRates');
+                    ratesDiv.innerHTML = `<span style="color: var(--usd-color);"><i class="fas fa-dollar-sign"></i> ${data.USD}</span><span style="margin-left: 1rem; color: var(--eur-color);"><i class="fas fa-euro-sign"></i> ${data.EUR}</span>`;
+                }).catch(error => {
+                    console.error('Döviz kuru alınamadı:', error);
+                    document.getElementById('currencyRates').innerText = 'Kur Alınamadı';
+                });
+            }
+            loadCurrencyRates();
+            setInterval(loadCurrencyRates, 3600000); 
+        });
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => console.log('Service Worker başarıyla kaydedildi:', registration.scope))
+                    .catch(err => console.log('Service Worker kaydı başarısız:', err));
+            });
+        }
+    </script>
+</body>
+</html>

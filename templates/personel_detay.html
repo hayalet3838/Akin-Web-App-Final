@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personel Detayı - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --border-color: #e2e8f0; --card-bg: #fff;
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --danger-color: #ef4444; --warning-color: #f59e0b; --success-color: #22c55e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); }
+        .top-nav {
+            background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: white; padding: 0.7rem 1.5rem;
+            border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: none; cursor: pointer;
+        }
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-success { background-color: var(--success-color); }
+        .btn-secondary { background-color: var(--text-light); }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+
+        .profile-header {
+            background-color: var(--card-bg); border-radius: 0.75rem; box-shadow: var(--card-shadow);
+            padding: 2rem; display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;
+        }
+        .profile-avatar {
+            width: 100px; height: 100px; background-color: var(--border-color); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--text-light);
+        }
+        .profile-info h1 { margin: 0 0 0.5rem 0; font-size: 2rem; }
+        .profile-info p { margin: 0; color: var(--text-light); font-size: 1.1rem; }
+        
+        .tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 1.5rem; }
+        .tab-link {
+            padding: 1rem 1.5rem; border: none; background: none; cursor: pointer; font-size: 1rem;
+            font-weight: 600; color: var(--text-light); border-bottom: 3px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .tab-link:hover { color: var(--text-dark); }
+        .tab-link.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .content-card {
+            background-color: var(--card-bg); padding: 2rem;
+            border-radius: 0.75rem; box-shadow: var(--card-shadow);
+        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .card-header h2 { margin: 0; font-size: 1.5rem; }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: 500; color: #334155; margin-bottom: 0.5rem; }
+        .form-group input, .form-group textarea, .form-group select {
+            padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem;
+            font-family: inherit; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px #bfdbfe; }
+        input:disabled, textarea:disabled { background-color: #f8fafc; cursor: not-allowed; }
+
+        .layout-grid { display: grid; grid-template-columns: 400px 1fr; gap: 2rem; align-items: flex-start; }
+        #izin-tablosu { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        #izin-tablosu th, #izin-tablosu td { padding: 0.75rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+        .delete-btn { background: none; border: none; color: var(--danger-color); cursor: pointer; font-size: 1rem;}
+        
+        .kart-listesi { display: flex; flex-direction: column; gap: 1rem; }
+        .bilgi-karti { border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .kart-baslik {
+            display: flex; justify-content: space-between; align-items: center;
+            background-color: #f8fafc; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color);
+        }
+        .kart-baslik-sol { display: flex; flex-direction: column; }
+        .kart-baslik-sol strong { font-size: 1rem; }
+        .kart-baslik-sol span { font-size: 0.85rem; color: var(--text-light); }
+        .kart-puan { font-size: 1.2rem; font-weight: 700; color: var(--warning-color); }
+        .kart-govde { padding: 1rem; white-space: pre-wrap; color: #334155; }
+        @media (max-width: 992px) { .layout-grid { grid-template-columns: 1fr; } }
+
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-users"></i> Personel Yönetimi</a>
+        <a href="/personel" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Personel Listesine Dön</a>
+    </nav>
+    <div class="container">
+        <div class="profile-header">
+            <div class="profile-avatar"><i class="fas fa-user"></i></div>
+            <div class="profile-info">
+                <h1 id="personel-adi-header">Yükleniyor...</h1>
+                <p id="personel-pozisyon-header">...</p>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-link active" onclick="openTab(event, 'ozluk')">Özlük Bilgileri</button>
+            <button class="tab-link" onclick="openTab(event, 'izin')">İzin Kayıtları</button>
+            <button class="tab-link" onclick="openTab(event, 'performans')">Performans Notları</button>
+            <button class="tab-link" onclick="openTab(event, 'egitim')">Alınan Eğitimler</button>
+        </div>
+
+        <div id="ozluk" class="tab-content active">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2>Özlük Bilgileri</h2>
+                    <div>
+                        <button id="duzenleBtn" class="btn btn-primary"><i class="fas fa-pencil-alt"></i> Düzenle</button>
+                        <button id="kaydetBtn" class="btn btn-success" style="display: none;"><i class="fas fa-save"></i> Kaydet</button>
+                        <button id="vazgecBtn" class="btn btn-secondary" style="display: none; margin-left: 0.5rem;"><i class="fas fa-times"></i> Vazgeç</button>
+                    </div>
+                </div>
+                <form id="ozlukForm">
+                    <div class="form-grid">
+                        <div class="form-group"><label>Ad Soyad</label><input type="text" id="ad_soyad" disabled></div>
+                        <div class="form-group"><label>Pozisyon</label><input type="text" id="pozisyon" disabled></div>
+                        <div class="form-group"><label>TC Kimlik Numarası</label><input type="text" id="tc_kimlik_no" disabled></div>
+                        <div class="form-group"><label>Doğum Tarihi</label><input type="text" id="dogum_tarihi" disabled></div>
+                        <div class="form-group"><label>Telefon Numarası</label><input type="text" id="telefon" disabled></div>
+                        <div class="form-group"><label>İşe Giriş Tarihi</label><input type="text" id="ise_giris_tarihi" disabled></div>
+                        <div class="form-group"><label>Net Maaş (₺)</label><input type="text" id="net_maas" disabled></div>
+                        <div class="form-group" style="grid-column: 1 / -1;"><label>Adres</label><textarea id="adres" rows="3" disabled></textarea></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div id="izin" class="tab-content"> ... </div>
+        <div id="performans" class="tab-content"> ... </div>
+        <div id="egitim" class="tab-content"> ... </div>
+    </div>
+
+    <script>
+        let personelId;
+        // YENİ: Personel verilerini ham halde tutmak için bir değişken
+        let personelDataStore = {};
+        // YENİ: Düzenleme modunda olup olmadığımızı takip eden bir değişken
+        let isEditingOzluk = false;
+
+        function openTab(event, tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+            document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(tabName).style.display = 'block';
+            event.currentTarget.classList.add('active');
+            localStorage.setItem('aktifPersonelDetayTab', tabName);
+        }
+
+        async function fetchData(url, errorMsg) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(errorMsg);
+                return await response.json();
+            } catch (error) {
+                console.error(error);
+                alert(error.message);
+                return null;
+            }
+        }
+        
+        // YENİ: Tarihi YYYY-MM-DD formatına çeviren yardımcı fonksiyon
+        function formatDateForInput(dateStr) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // YENİ: Özlük Bilgileri formunu dolduran fonksiyon
+        function populateOzlukForm(data) {
+            // Ham veriyi sakla
+            personelDataStore = data;
+            
+            // Üstteki başlık alanlarını doldur
+            document.getElementById('personel-adi-header').textContent = data.ad_soyad;
+            document.getElementById('personel-pozisyon-header').textContent = data.pozisyon || 'Belirtilmemiş';
+            
+            // Form alanlarını doldur
+            document.getElementById('ad_soyad').value = data.ad_soyad;
+            document.getElementById('pozisyon').value = data.pozisyon || '';
+            document.getElementById('tc_kimlik_no').value = data.tc_kimlik_no || '';
+            document.getElementById('telefon').value = data.telefon || '';
+            document.getElementById('adres').value = data.adres || '';
+            document.getElementById('net_maas').value = data.net_maas || '';
+
+            // Tarihleri formatlayarak göster
+            document.getElementById('dogum_tarihi').value = data.dogum_tarihi ? new Date(data.dogum_tarihi).toLocaleDateString('tr-TR') : '';
+            document.getElementById('ise_giris_tarihi').value = data.ise_giris_tarihi ? new Date(data.ise_giris_tarihi).toLocaleDateString('tr-TR') : '';
+        }
+
+        // YENİ: Düzenleme modunu açıp kapatan fonksiyon
+        function toggleOzlukEditMode(edit) {
+            isEditingOzluk = edit;
+            const formElements = document.querySelectorAll('#ozlukForm input, #ozlukForm textarea');
+            formElements.forEach(el => el.disabled = !edit);
+            
+            document.getElementById('duzenleBtn').style.display = edit ? 'none' : 'inline-flex';
+            document.getElementById('kaydetBtn').style.display = edit ? 'inline-flex' : 'none';
+            document.getElementById('vazgecBtn').style.display = edit ? 'inline-flex' : 'none';
+
+            // Düzenleme moduna girerken input tiplerini ve formatlarını ayarla
+            const dogumTarihiInput = document.getElementById('dogum_tarihi');
+            const iseGirisTarihiInput = document.getElementById('ise_giris_tarihi');
+            const netMaasInput = document.getElementById('net_maas');
+
+            if (edit) {
+                dogumTarihiInput.type = 'date';
+                iseGirisTarihiInput.type = 'date';
+                netMaasInput.type = 'number';
+                
+                dogumTarihiInput.value = formatDateForInput(personelDataStore.dogum_tarihi);
+                iseGirisTarihiInput.value = formatDateForInput(personelDataStore.ise_giris_tarihi);
+                netMaasInput.value = personelDataStore.net_maas || '';
+            } else {
+                dogumTarihiInput.type = 'text';
+                iseGirisTarihiInput.type = 'text';
+                netMaasInput.type = 'text';
+                // Değişikliklerden vazgeçildiğinde orijinal veriyi tekrar yükle
+                populateOzlukForm(personelDataStore);
+            }
+        }
+
+        // YENİ: Değişiklikleri kaydeden fonksiyon
+        async function saveOzlukChanges() {
+            const dataToSave = {
+                ad_soyad: document.getElementById('ad_soyad').value,
+                pozisyon: document.getElementById('pozisyon').value,
+                tc_kimlik_no: document.getElementById('tc_kimlik_no').value,
+                dogum_tarihi: document.getElementById('dogum_tarihi').value || null,
+                telefon: document.getElementById('telefon').value,
+                ise_giris_tarihi: document.getElementById('ise_giris_tarihi').value || null,
+                net_maas: parseFloat(document.getElementById('net_maas').value) || null,
+                adres: document.getElementById('adres').value
+            };
+
+            try {
+                const response = await fetch(`/api/personel/${personelId}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(dataToSave)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail || 'Bilinmeyen bir hata oluştu.');
+                
+                alert('Personel bilgileri başarıyla güncellendi.');
+                
+                // Güncellenmiş veriyi tekrar çek ve gösterim moduna dön
+                const updatedData = await fetchData(`/api/personel/${personelId}`, 'Personel verisi yeniden yüklenemedi.');
+                if(updatedData) {
+                    populateOzlukForm(updatedData);
+                }
+                toggleOzlukEditMode(false);
+
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+        
+        // --- Diğer sekmelerin fonksiyonları (İzin, Performans, Eğitim) burada aynı şekilde kalabilir ---
+        // ... (handleIzinSubmit, deleteIzin, vs. fonksiyonları)
+
+        
+        // --- SAYFA YÜKLEME ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            const pathParts = window.location.pathname.split('/');
+            personelId = pathParts[pathParts.length - 1];
+
+            if (!personelId || isNaN(personelId)) {
+                document.getElementById('personel-adi-header').textContent = "Geçersiz Personel ID";
+                return;
+            }
+
+            // Ana personel verisini yükle ve formu doldur
+            const personelData = await fetchData(`/api/personel/${personelId}`, 'Personel Yüklenemedi');
+            if (personelData) {
+                populateOzlukForm(personelData);
+                // Diğer tabların verilerini yükle
+                // ... loadIzinler(personelId); vs. çağrıları
+            } else {
+                document.getElementById('personel-adi-header').textContent = "Personel Yüklenemedi";
+            }
+
+            // YENİ: Butonlar için Event Listeners
+            document.getElementById('duzenleBtn').addEventListener('click', () => toggleOzlukEditMode(true));
+            document.getElementById('vazgecBtn').addEventListener('click', () => toggleOzlukEditMode(false));
+            document.getElementById('kaydetBtn').addEventListener('click', saveOzlukChanges);
+
+            // Mevcut Event Listeners
+            // ... (izinForm, performansForm, egitimForm submit event'leri)
+            
+            // Sayfa yenilendiğinde son kalınan tab'ı aç
+            const savedTab = localStorage.getItem('aktifPersonelDetayTab');
+            if (savedTab) {
+                const tabButton = document.querySelector(`.tab-link[onclick*="'${savedTab}'"]`);
+                if (tabButton) tabButton.click();
+            }
+        });
+    </script>
+</body>
+</html>

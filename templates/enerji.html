@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enerji Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --danger-color: #ef4444;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-dark); 
+            margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); padding: 0 2rem; height: 70px; 
+            box-shadow: var(--card-shadow); display: flex; align-items: center; 
+            justify-content: space-between; position: sticky; top: 0; z-index: 1000; 
+        }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn-secondary { 
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; 
+            padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; 
+            border: 1px solid var(--border-color); background-color: #64748b; color: white; border-color: #64748b; 
+        }
+        .btn-secondary:hover { background-color: #475569; }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+
+        .tabs { display: flex; border-bottom: 2px solid var(--border-color); }
+        .tab-link {
+            padding: 1rem 1.5rem; border: none; background: none; cursor: pointer; font-size: 1.1rem;
+            font-weight: 600; color: var(--text-light); border-bottom: 4px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .tab-link.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .content-card {
+            background-color: var(--card-bg); padding: 2rem; border-radius: 0 0.75rem 0.75rem 0.75rem;
+            box-shadow: var(--card-shadow); border: 1px solid var(--border-color); border-top: none;
+        }
+        .content-card h2 { font-size: 1.5rem; margin-top:0; margin-bottom: 1.5rem; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select { 
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); 
+            border-radius: 0.5rem; font-size: 1rem; 
+        }
+
+        .btn-primary { background-color: var(--primary-color); color: white; border:none; width: 100%; padding: 0.8rem; cursor: pointer; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-bolt"></i> Enerji Yönetimi</a>
+        <a href="/" class="btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Enerji Tüketim Takibi</h1>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-link active" data-tab="veriler">Tüketim Verileri</button>
+            <button class="tab-link" data-tab="analiz">Grafiksel Analiz</button>
+        </div>
+        
+        <div id="veriler" class="tab-content active">
+            <div class="content-card">
+                <div style="display: grid; grid-template-columns: 400px 1fr; gap: 2rem; align-items: start;">
+                    <div>
+                        <h2>Yeni Tüketim Kaydı</h2>
+                        <form id="enerjiForm">
+                            <div class="form-group">
+                                <label for="donem">Dönem</label>
+                                <input type="month" id="donem" name="donem" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="enerjiTipi">Enerji Tipi</label>
+                                <select id="enerjiTipi" name="enerji_tipi" required>
+                                    <option value="Elektrik">Elektrik</option>
+                                    <option value="Doğalgaz">Doğalgaz</option>
+                                    <option value="Su">Su</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tuketimMiktari">Tüketim Miktarı</label>
+                                <input type="number" id="tuketimMiktari" name="tuketim_miktari" step="any" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="birim">Birim</label>
+                                <select id="birim" name="birim" required>
+                                    <option value="kWh">kWh</option>
+                                    <option value="m³">m³</option>
+                                    <option value="Litre">Litre</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-primary" style="border-radius: 0.5rem;"><i class="fas fa-plus"></i> Kaydı Ekle</button>
+                        </form>
+                    </div>
+                    <div>
+                        <h2>Aylık Tüketim ve Maliyetler</h2>
+                        <div style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Dönem</th>
+                                        <th>Tip</th>
+                                        <th>Miktar</th>
+                                        <th>Toplam Maliyet</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tuketim-tablosu"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="analiz" class="tab-content">
+            <div class="content-card">
+                <h2>Analiz Ekranı</h2>
+                <p>Bu alana daha sonra grafikler eklenecektir.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('enerjiForm');
+            const tbody = document.getElementById('tuketim-tablosu');
+
+            async function loadTuketimler() {
+                try {
+                    const response = await fetch('/api/enerji-tuketimi');
+                    if (!response.ok) throw new Error('Tüketim verileri yüklenemedi.');
+                    const tuketimler = await response.json();
+                    renderTuketimler(tuketimler);
+                } catch (error) {
+                    console.error(error);
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">${error.message}</td></tr>`;
+                }
+            }
+
+            // Gelen verileri tabloya yazdırır (GÜNCELLENDİ)
+            function renderTuketimler(tuketimler) {
+                tbody.innerHTML = '';
+                if (tuketimler.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Kayıtlı tüketim verisi bulunmuyor.</td></tr>';
+                    return;
+                }
+                tuketimler.forEach(item => {
+                    const toplamMaliyetFormatted = (item.toplam_maliyet && item.toplam_maliyet > 0)
+                        ? `${item.toplam_maliyet.toFixed(2).replace('.', ',')} TL`
+                        : '-';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${item.donem_str}</td>
+                            <td>${item.enerji_tipi}</td>
+                            <td>${String(item.tuketim_miktari).replace('.', ',')} ${item.birim}</td>
+                            <td><strong>${toplamMaliyetFormatted}</strong></td>
+                            <td><button style="background:none;border:none;color:var(--danger-color);cursor:pointer;" onclick="deleteTuketim(${item.id})"><i class="fas fa-trash"></i></button></td>
+                        </tr>
+                    `;
+                });
+            }
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const data = {
+                    donem: document.getElementById('donem').value,
+                    enerji_tipi: document.getElementById('enerjiTipi').value,
+                    tuketim_miktari: parseFloat(document.getElementById('tuketimMiktari').value),
+                    birim: document.getElementById('birim').value
+                };
+
+                try {
+                    const response = await fetch('/api/enerji-tuketimi', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.detail || 'Bilinmeyen bir hata oluştu.');
+                    alert(result.message);
+                    form.reset();
+                    document.getElementById('donem').value = new Date().toISOString().slice(0, 7);
+                    await loadTuketimler();
+                } catch (error) {
+                    alert(`Hata: ${error.message}`);
+                }
+            });
+
+            window.deleteTuketim = async function(id) {
+                if(!confirm(`Bu tüketim kaydını silmek istediğinizden emin misiniz?`)) return;
+                try {
+                    const response = await fetch(`/api/enerji-tuketimi/${id}`, { method: 'DELETE' });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.detail || 'Bilinmeyen bir hata oluştu.');
+                    alert(result.message);
+                    await loadTuketimler();
+                } catch (error) {
+                    alert(`Hata: ${error.message}`);
+                }
+            }
+
+            document.querySelectorAll('.tab-link').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(button.dataset.tab).classList.add('active');
+                });
+            });
+
+            document.getElementById('donem').value = new Date().toISOString().slice(0, 7);
+            loadTuketimler();
+        });
+    </script>
+</body>
+</html>

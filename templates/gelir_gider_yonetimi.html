@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelir Gider Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --success-color: #22c55e; 
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-dark); 
+            margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); padding: 0 2rem; height: 70px; 
+            box-shadow: var(--card-shadow); display: flex; align-items: center; 
+            justify-content: space-between; position: sticky; top: 0; z-index: 1000; 
+        }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { 
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; 
+            text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; 
+            font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color);
+            background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; 
+        }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; transform: translateY(-2px); }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; transform: translateY(-2px); }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        
+        /* YENİ: Özet Kartları Stilleri */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+        }
+        .stat-card .icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+        .stat-card .icon.gelir { background-color: var(--success-color); }
+        .stat-card .icon.gider { background-color: var(--danger-color); }
+        .stat-card .icon.bakiye { background-color: var(--primary-color); }
+        .stat-card .info h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .stat-card .info p {
+            margin: 0.25rem 0 0 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        /* BİTİŞ: Özet Kartları Stilleri */
+
+        .content-card { 
+            background-color: var(--card-bg); 
+            border-radius: 0.75rem; 
+            padding: 2rem; 
+            box-shadow: var(--card-shadow); 
+            border: 1px solid var(--border-color);
+        }
+        .content-card h2 {
+            font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); 
+            border-radius: 0.5rem; font-size: 1rem; 
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgb(59 130 246 / 0.2);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        .action-buttons button { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--danger-color); }
+        
+        .content-grid { display: grid; grid-template-columns: 400px 1fr; gap: 2rem; }
+        .gelir { color: var(--success-color); font-weight: 600; }
+        .gider { color: var(--danger-color); font-weight: 600; }
+
+        @media (max-width: 992px) {
+            .content-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .content-card { padding: 1.5rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-chart-pie"></i> Gelir Gider Yönetimi</a>
+        <a href="/" class="btn btn-secondary" style="text-decoration: none;"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Genel Finansal Durum</h1>
+        </div>
+
+        <div class="summary-grid">
+            <div class="stat-card">
+                <div class="icon gelir"><i class="fas fa-arrow-up"></i></div>
+                <div class="info">
+                    <h3>Toplam Gelir</h3>
+                    <p id="ozet-gelir">0,00 ₺</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon gider"><i class="fas fa-arrow-down"></i></div>
+                <div class="info">
+                    <h3>Toplam Gider</h3>
+                    <p id="ozet-gider">0,00 ₺</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="icon bakiye"><i class="fas fa-wallet"></i></div>
+                <div class="info">
+                    <h3>Genel Bakiye</h3>
+                    <p id="ozet-bakiye">0,00 ₺</p>
+                </div>
+            </div>
+        </div>
+        <div class="content-grid">
+            <div class="content-card">
+                <h2>Yeni Kayıt Ekle</h2>
+                <form id="finansForm">
+                    <div class="form-group">
+                        <label for="islemTarihi">Tarih</label>
+                        <input type="date" id="islemTarihi" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="islemTipi">İşlem Tipi</label>
+                        <select id="islemTipi" required>
+                            <option value="gelir">Gelir</option>
+                            <option value="gider">Gider</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="miktar">Miktar (₺)</label>
+                        <input type="number" id="miktar" required step="0.01" placeholder="Örn: 1500.50">
+                    </div>
+                    <div class="form-group">
+                        <label for="aciklama">Açıklama</label>
+                        <textarea id="aciklama" rows="4" placeholder="İşlemle ilgili detaylar..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-plus"></i> Kaydı Ekle</button>
+                </form>
+            </div>
+            <div class="content-card">
+                <h2>Geçmiş Kayıtlar</h2>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Tip</th>
+                                <th>Açıklama</th>
+                                <th>Miktar</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="finansTablosu"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_PREFIX = '/api';
+
+        // YENİ: Sayıyı para formatına çeviren yardımcı fonksiyon
+        function formatCurrency(value) {
+            return value.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+        }
+
+        // YENİ: Finansal özeti yükleyen ve gösteren fonksiyon
+        async function loadFinansalOzet() {
+            try {
+                const response = await fetch(`${API_PREFIX}/finansal-ozet`);
+                const ozet = await response.json();
+
+                document.getElementById('ozet-gelir').textContent = formatCurrency(ozet.toplam_gelir);
+                document.getElementById('ozet-gider').textContent = formatCurrency(ozet.toplam_gider);
+                document.getElementById('ozet-bakiye').textContent = formatCurrency(ozet.bakiye);
+
+            } catch (error) {
+                console.error('Finansal özet yüklenirken hata:', error);
+            }
+        }
+
+        async function loadFinansalIslemler() {
+            try {
+                const response = await fetch(`${API_PREFIX}/finansal-islemler`);
+                const islemler = await response.json();
+                const tbody = document.getElementById('finansTablosu');
+                tbody.innerHTML = '';
+                if (islemler.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">Kayıtlı finansal işlem bulunmamaktadır.</td></tr>';
+                    return;
+                }
+                islemler.forEach(i => {
+                    // Bu sayfada sadece cariye bağlı olmayan işlemleri gösteriyoruz.
+                    if (!i.ilgili_cari_adi || i.ilgili_cari_adi === 'Bilinmiyor') {
+                        const tipClass = i.islem_tipi === 'gelir' ? 'gelir' : 'gider';
+                        const miktarFormatted = formatCurrency(parseFloat(i.miktar));
+                        const dateFormatted = new Date(i.islem_tarihi).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                        const row = `
+                            <tr>
+                                <td>${dateFormatted}</td>
+                                <td><span class="${tipClass}">${i.islem_tipi.toUpperCase()}</span></td>
+                                <td>${i.aciklama || '-'}</td>
+                                <td class="${tipClass}">${miktarFormatted}</td>
+                                <td class="action-buttons">
+                                    <button onclick="deleteFinansalIslem(${i.id})" title="Sil"><i class="fas fa-trash-can"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    }
+                });
+            } catch (error) {
+                console.error('Finansal işlemler yüklenirken hata:', error);
+                alert("Finansal işlemler yüklenemedi.");
+            }
+        }
+
+        async function createFinansalIslem(event) {
+            event.preventDefault();
+            const form = event.target;
+            const data = {
+                islem_tarihi: form.islemTarihi.value,
+                islem_tipi: form.islemTipi.value,
+                miktar: parseFloat(form.miktar.value),
+                aciklama: form.aciklama.value || null,
+                // Bu formdan eklenenler cariye bağlı değil, bu yüzden null gönderiyoruz
+                ilgili_cari_id: 'musteri-0' // Backend'in bekleme şekline göre geçici bir çözüm
+            };
+            try {
+                const response = await fetch(`${API_PREFIX}/finansal-islemler`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail || 'Kayıt eklenirken bir hata oluştu.');
+                alert(result.message);
+                form.reset();
+                setDefaultDate();
+                await loadFinansalIslemler();
+                await loadFinansalOzet(); // GÜNCELLEME: Kayıttan sonra özeti yenile
+            } catch (error) {
+                alert(`İşlem başarısız: ${error.message}`);
+            }
+        }
+
+        async function deleteFinansalIslem(id) {
+            if (!confirm("Bu finansal kaydı silmek istediğinizden emin misiniz?")) {
+                return;
+            }
+            try {
+                const response = await fetch(`${API_PREFIX}/finansal-islemler/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail || 'Silme işlemi başarısız.');
+                alert(result.message);
+                await loadFinansalIslemler();
+                await loadFinansalOzet(); // GÜNCELLEME: Silme işleminden sonra özeti yenile
+            } catch (error) {
+                alert(`Silme işlemi başarısız: ${error.message}`);
+            }
+        }
+        
+        function setDefaultDate() {
+            const today = new Date();
+            const offset = today.getTimezoneOffset();
+            const localDate = new Date(today.getTime() - (offset*60*1000));
+            document.getElementById('islemTarihi').value = localDate.toISOString().split('T')[0];
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFinansalIslemler();
+            loadFinansalOzet(); // GÜNCELLEME: Sayfa yüklendiğinde özeti yükle
+            document.getElementById('finansForm').addEventListener('submit', createFinansalIslem);
+            setDefaultDate();
+            window.deleteFinansalIslem = deleteFinansalIslem;
+        });
+    </script>
+</body>
+</html>

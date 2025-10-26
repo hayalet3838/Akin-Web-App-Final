@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sevkiyat Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --warning-color: #f97316;
+            --danger-color: #ef4444; --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        
+        .content-card { background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; white-space: nowrap;}
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        .status-badge { padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; color: white; text-transform: capitalize;}
+        .status-onaylandi { background-color: var(--warning-color); }
+        .status-sevk-edildi { background-color: var(--success-color); }
+        .action-buttons a, .action-buttons button { text-decoration:none; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; background-color: var(--primary-color); border:none; cursor:pointer; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background-color: var(--card-bg); border-radius: 1rem; padding: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 90%; max-width: 500px; transform: scale(0.95); transition: transform 0.3s ease; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; border: none; padding: 0; }
+        .close-btn { background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--text-light); transition: color 0.2s; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem; }
+        
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-truck-fast"></i> Sevkiyat Yönetimi</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Sevkiyat Listesi</h1>
+        </div>
+        <div class="content-card">
+            <h2>Tüm Sipariş ve Sevkiyatlar</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sipariş Kodu</th>
+                            <th>Müşteri</th>
+                            <th>Sevk Tarihi</th>
+                            <th>Kargo Firması</th>
+                            <th>Takip No</th>
+                            <th>Durum</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sevkiyat-listesi"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="sevkiyatModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Sevkiyat Bilgileri Gir</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="sevkiyatForm" autocomplete="off">
+                <input type="hidden" id="satis_siparis_id" name="satis_siparis_id">
+                <div class="form-group">
+                    <label for="sevk_tarihi">Sevk Tarihi</label>
+                    <input type="date" id="sevk_tarihi" name="sevk_tarihi" required>
+                </div>
+                <div class="form-group">
+                    <label for="kargo_firmasi">Kargo Firması</label>
+                    <input type="text" id="kargo_firmasi" name="kargo_firmasi" placeholder="Kargo firması adını girin..." required>
+                </div>
+                <div class="form-group">
+                    <label for="takip_numarasi">Takip Numarası</label>
+                    <input type="text" id="takip_numarasi" name="takip_numarasi" placeholder="Kargo takip numarasını girin...">
+                </div>
+                <div class="form-group">
+                    <label for="notlar">Notlar (Opsiyonel)</label>
+                    <textarea id="notlar" name="notlar" rows="3" placeholder="Ek açıklama..."></textarea>
+                </div>
+                 <div class="form-group">
+                    <label for="kargo_fisi">Kargo Fişi (Resim)</label>
+                    <input type="file" id="kargo_fisi" name="kargo_fisi" accept="image/*,.pdf">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fas fa-save"></i> Sevkiyatı Kaydet</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sevkiyatListesiTbody = document.getElementById('sevkiyat-listesi');
+            const sevkiyatModal = document.getElementById('sevkiyatModal');
+            const sevkiyatForm = document.getElementById('sevkiyatForm');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            async function loadSevkiyatlar() {
+                try {
+                    const response = await fetch('/api/sevkiyatlar');
+                    if (!response.ok) throw new Error('Sevkiyat verileri yüklenemedi.');
+                    const data = await response.json();
+                    renderTable(data);
+                } catch (error) {
+                    console.error(error);
+                    sevkiyatListesiTbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--danger-color);">${error.message}</td></tr>`;
+                }
+            }
+
+            function slugify(text) {
+                return (text || '').toString().toLowerCase().replace(/\s+/g, '-').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/[^\w\-]+/g, '');
+            }
+
+            function renderTable(data) {
+                sevkiyatListesiTbody.innerHTML = '';
+                if (data.length === 0) {
+                    sevkiyatListesiTbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-light);">Gösterilecek sevkiyat bulunmuyor.</td></tr>`;
+                    return;
+                }
+                data.sort((a, b) => (a.durum === 'Sevk Edildi' ? 1 : 0) - (b.durum === 'Onaylandı' ? 1 : 0));
+                data.forEach(item => {
+                    const durumClass = `status-${slugify(item.durum)}`;
+                    const sevkTarihi = item.sevk_tarihi ? new Date(item.sevk_tarihi).toLocaleDateString('tr-TR') : '-';
+                    
+                    const islemButonu = item.durum === 'Onaylandı' 
+                        ? `<button onclick="openModal(${item.satis_siparis_id}, '${item.siparis_kodu}')"><i class="fas fa-truck"></i> Sevk Et</button>`
+                        : `<a href="/sevkiyat/${item.id}/detay" title="Detayları Gör"><i class="fas fa-eye"></i> Detay</a>`;
+
+                    const row = `
+                        <tr>
+                            <td><strong>${item.siparis_kodu}</strong></td>
+                            <td>${item.musteri_adi}</td>
+                            <td>${sevkTarihi}</td>
+                            <td>${item.kargo_firmasi || '-'}</td>
+                            <td>${item.takip_numarasi || '-'}</td>
+                            <td><span class="status-badge ${durumClass}">${item.durum}</span></td>
+                            <td class="action-buttons">${islemButonu}</td>
+                        </tr>
+                    `;
+                    sevkiyatListesiTbody.innerHTML += row;
+                });
+            }
+
+            window.openModal = function(id, kod) {
+                modalTitle.textContent = `${kod} için Sevkiyat Bilgilerini Gir`;
+                sevkiyatForm.reset();
+                document.getElementById('satis_siparis_id').value = id;
+                document.getElementById('sevk_tarihi').valueAsDate = new Date();
+                sevkiyatModal.classList.add('active');
+            }
+
+            window.closeModal = function() {
+                sevkiyatModal.classList.remove('active');
+            }
+
+            sevkiyatForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(sevkiyatForm);
+                
+                try {
+                    const response = await fetch('/api/sevkiyatlar', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    
+                    if (!response.ok) {
+                        let errorMessage = 'Bilinmeyen bir hata oluştu.';
+                        if (result.detail) {
+                            if (typeof result.detail === 'string') {
+                                errorMessage = result.detail;
+                            } else if (Array.isArray(result.detail)) {
+                                errorMessage = result.detail.map(err => `${err.loc[1]}: ${err.msg}`).join('\n');
+                            }
+                        }
+                        throw new Error(errorMessage);
+                    }
+                    
+                    alert(result.message);
+                    closeModal();
+                    await loadSevkiyatlar();
+                } catch(error) {
+                    alert(`Hata:\n${error.message}`);
+                }
+            });
+
+            sevkiyatModal.addEventListener('click', e => { if(e.target === sevkiyatModal) closeModal(); });
+            loadSevkiyatlar();
+        });
+    </script>
+</body>
+</html>

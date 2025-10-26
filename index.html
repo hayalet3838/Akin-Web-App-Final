@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Düğmeci Makina - Entegrasyon Paneli</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#3b82f6">
+
+    <link rel="manifest" href="/static/manifest.json">
+    
+    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        :root {
+            --nav-bg: #ffffff; --main-bg: #f1f5f9; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --border-color: #e2e8f0; --card-bg: #fff;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --production-color: #ef4444; --stock-color: #22c55e; --sales-color: #eab308;
+            --finance-color: #3b82f6; --recipe-color: #9333ea; --personel-color: #c084fc;
+            --rapor-color: #6d28d9; --customer-color: #f97316; --settings-color: #64748b;
+            --pdks-color: #14b8a6; --vardiya-color: #f43f5e;
+            --maas-color: #84cc16;
+            --quality-color: #16a34a; --energy-color: #ff9900; --crm-color: #94a3b8;
+            --usd-color: #22c55e; --eur-color: #eab308;
+        }
+
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); margin: 0; }
+        .dashboard-container { display: flex; flex-direction: column; min-height: 100vh; }
+
+        .top-nav {
+            background-color: var(--nav-bg); padding: 0 2rem; height: 70px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center;
+            justify-content: space-between; position: fixed; top: 0; left: 0;
+            width: 100%; box-sizing: border-box; z-index: 1000;
+        }
+        .nav-left { display: flex; align-items: center; }
+        .logo { font-size: 1.4rem; font-weight: 700; color: var(--text-dark); text-decoration: none; margin-right: 2.5rem; }
+        .nav-links { display: flex; gap: 1rem; }
+        .nav-links a {
+            color: var(--text-dark); text-decoration: none; font-weight: 500;
+            padding: 0.5rem 0; border-bottom: 2px solid transparent;
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-links a:hover { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .date-info { font-size: 1rem; font-weight: 600; color: var(--text-dark); }
+        .currency-rates {
+            display: flex; gap: 1rem; font-weight: 600; font-size: 1rem;
+            background-color: #f8fafc; padding: 0.5rem 1rem; border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        .currency-rates .usd { color: var(--usd-color); }
+        .currency-rates .eur { color: var(--eur-color); }
+
+        .content { flex: 1; padding: 2rem; padding-top: 90px; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .main-header h1 { color: var(--text-dark); margin: 0; }
+        
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .summary-card { background-color: var(--card-bg); border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 2px 4px var(--shadow-light); display: flex; flex-direction: column; align-items: flex-start; }
+        .summary-card-icon { font-size: 1.5rem; margin-bottom: 1rem; }
+        .summary-card h3 { font-size: 1rem; color: var(--text-light); margin: 0; }
+        .summary-card-value { font-size: 2rem; font-weight: 700; color: var(--text-dark); margin-top: 0.5rem; }
+        .summary-card.production .summary-card-icon { color: var(--production-color); }
+        .summary-card.stock .summary-card-icon { color: var(--stock-color); }
+        .summary-card.sales .summary-card-icon { color: var(--sales-color); }
+        .summary-card.finance .summary-card-icon { color: var(--finance-color); }
+        
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .menu-box { background-color: var(--card-bg); border-radius: 0.5rem; padding: 2rem; box-shadow: 0 2px 4px var(--shadow-light); display: flex; align-items: center; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; }
+        .menu-box:hover { transform: translateY(-5px); box-shadow: 0 4px 8px var(--shadow-light); }
+        .menu-box .card-icon { font-size: 3rem; margin-right: 1.5rem; width: 48px; text-align: center; }
+        .menu-box .card-content h2 { font-size: 1.25rem; margin: 0 0 0.25rem 0; color: var(--text-dark); }
+        .menu-box .card-content p { font-size: 0.875rem; color: var(--text-light); margin: 0; }
+
+        .menu-box[href="/uretim"] .card-icon { color: var(--production-color); }
+        .menu-box[href="/stok"] .card-icon { color: var(--stock-color); }
+        .menu-box[href="/satis"] .card-icon { color: var(--sales-color); }
+        .menu-box[href="/crm"] .card-icon { color: var(--crm-color); }
+        .menu-box[href="/recete"] .card-icon { color: var(--recipe-color); }
+        .menu-box[href="/gelir-gider"] .card-icon { color: var(--finance-color); }
+        .menu-box[href="/personel"] .card-icon { color: var(--personel-color); }
+        .menu-box[href="/maas"] .card-icon { color: var(--maas-color); }
+        .menu-box[href="/pdks"] .card-icon { color: var(--pdks-color); }
+        .menu-box[href="/vardiya"] .card-icon { color: var(--vardiya-color); }
+        .menu-box[href="/raporlama"] .card-icon { color: var(--rapor-color); }
+        .menu-box[href="/enerji"] .card-icon { color: var(--energy-color); }
+        .menu-box[href="/izlenebilirlik"] .card-icon { color: var(--customer-color); }
+        .menu-box[href="/kaliplar"] .card-icon { color: var(--recipe-color); }
+        .menu-box[href="/kalite-kontrol"] .card-icon { color: var(--quality-color); }
+        .menu-box[href="/ayarlar"] .card-icon { color: var(--settings-color); }
+        
+        footer { padding: 2rem; text-align: center; color: var(--text-light); margin-top: auto; }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Mobil Uyumlu Tasarım Kodları */
+        @media (max-width: 768px) {
+            .top-nav {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 1rem;
+            }
+            .nav-left {
+                width: 100%;
+                justify-content: space-between;
+                margin-bottom: 1rem;
+            }
+            .nav-right {
+                width: 100%;
+                justify-content: flex-end;
+                gap: 0.5rem;
+            }
+            .currency-rates {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.8rem;
+            }
+            .date-info {
+                font-size: 0.8rem;
+            }
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            .nav-links a {
+                padding: 1rem 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .menu-toggle {
+                display: block;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+            .content {
+                padding-top: 150px;
+            }
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="top-nav">
+            <div class="nav-left">
+                <a href="#" class="logo" data-sayfa="anasayfa">Düğmeci Makina</a>
+                <button class="menu-toggle" aria-label="Menüyü Aç/Kapat"><i class="fas fa-bars"></i></button>
+                <div class="nav-links">
+                    <a href="#" data-sayfa="uretim">Üretim</a>
+                    <a href="#" data-sayfa="stok">Stok</a>
+                    <a href="#" data-sayfa="satis">Satış</a>
+                    <a href="#" data-sayfa="crm">CRM</a>
+                    <a href="#" data-sayfa="recete">Reçete</a>
+                    <a href="#" data-sayfa="finans">Finans</a>
+                    <a href="#" data-sayfa="personel">Personel</a>
+                    <a href="#" data-sayfa="maas">Maaş</a>
+                    <a href="#" data-sayfa="pdks">PDKS</a>
+                    <a href="#" data-sayfa="vardiya">Vardiya</a>
+                    <a href="#" data-sayfa="raporlama">Raporlama</a>
+                    <a href="#" data-sayfa="enerji">Enerji</a>
+                    <a href="#" data-sayfa="izlenebilirlik">İzlenebilirlik</a>
+                    <a href="#" data-sayfa="kaliplar">Kalıplar</a>
+                    <a href="#" data-sayfa="kalite-kontrol">Kalite Kontrol</a>
+                    <a href="#" data-sayfa="ayarlar">Ayarlar</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="currency-rates" id="currencyRates">
+                    <span>Yükleniyor...</span>
+                </div>
+                <div class="date-info" id="currentDateTime"></div>
+            </div>
+        </nav>
+
+        <main class="content" id="ana-icerik">
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Düğmeci Makina. Tüm Hakları Saklıdır.</p>
+        </footer>
+    </div>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/static/sw.js').then(registration => {
+              console.log('Service Worker başarıyla kaydedildi:', registration.scope);
+            }).catch(error => {
+              console.log('Service Worker kaydı başarısız:', error);
+            });
+          });
+        }
+    </script>
+    
+    <script src="/static/app.js"></script>
+</body>
+</html>

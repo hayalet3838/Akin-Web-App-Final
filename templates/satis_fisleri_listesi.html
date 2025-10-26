@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satış Fişleri - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --warning-color: #f59e0b;
+            --danger-color: #ef4444; --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; transform: translateY(-2px); }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; transform: translateY(-2px); }
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        .content-card { background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); margin-bottom: 2rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; white-space: nowrap;}
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+        tbody tr.siparis-ana-satir { cursor: pointer; transition: background-color 0.2s; }
+        tbody tr.siparis-ana-satir:hover { background-color: #f8fafc; }
+        tbody tr:last-child td { border-bottom: none; }
+        .detay-satiri { display: none; }
+        .detay-satiri.goster { display: table-row; }
+        .detay-icerik { background-color: #f8fafc; padding: 1.5rem; }
+        .detay-icerik table { width: auto; margin-left: 50px; border: 1px solid var(--border-color); border-radius: 0.5rem; }
+        .detay-icerik th { background-color: #eef2ff; color: #4338ca; }
+        .expand-icon { transition: transform 0.3s; display: inline-block; }
+        .expanded .expand-icon { transform: rotate(90deg); }
+        .status-badge { padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; color: white; text-transform: capitalize; }
+        .status-onaylandi { background-color: var(--warning-color); color: var(--text-dark); }
+        .status-tamamlandi { background-color: var(--success-color); }
+        .status-iptal-edildi { background-color: var(--danger-color); }
+        .status-sevk-edildi { background-color: var(--primary-color); }
+        .status-uretimde { background-color: #a855f7; }
+        .status-bekliyor { background-color: var(--text-light); }
+        .action-buttons a { color: var(--text-light); margin: 0 0.75rem; font-size: 1.2rem; text-decoration: none; transition: color 0.2s; }
+        .action-buttons a:hover { color: var(--primary-color); }
+        .table-info { text-align: center; padding: 3rem; color: var(--text-light); font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-list-alt"></i> Satış Fişleri</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Satış Fişleri / Sipariş Listesi</h1>
+            <a href="/satis" class="btn btn-primary"><i class="fas fa-plus"></i> Yeni Sipariş Oluştur</a>
+        </div>
+        <div class="content-card">
+            <h2>Sipariş Listesi</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th><th>Fiş No</th><th>Müşteri Adı</th><th>Tarih</th><th>Tutar</th><th>Durum</th><th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="siparisler-tablosu"></tbody>
+                </table>
+            </div>
+             <div id="table-info" class="table-info"><p>Siparişler yükleniyor...</p></div>
+        </div>
+    </div>
+
+    <script>
+        // YENİ VE GÜNCELLENMİŞ FONKSİYON
+        async function toggleSiparisDetay(siparisId) {
+            const detaySatiri = document.getElementById(`detay-${siparisId}`);
+            const anaSatir = document.getElementById(`siparis-${siparisId}`);
+            if (!detaySatiri || !anaSatir) return;
+
+            // Satırın görünürlüğünü değiştir
+            const isGosteriliyor = detaySatiri.classList.toggle('goster');
+            anaSatir.classList.toggle('expanded');
+
+            // Eğer satır açılıyorsa VE daha önce içeriği yüklenmemişse, API'den veriyi çek
+            if (isGosteriliyor && !detaySatiri.dataset.loaded) {
+                const detayIcerikDiv = detaySatiri.querySelector('.detay-icerik');
+                detayIcerikDiv.innerHTML = '<h4>Sipariş İçeriği</h4><p>Yükleniyor...</p>';
+                try {
+                    const response = await fetch(`/api/satis-fisleri/${siparisId}`);
+                    const data = await response.json();
+                    
+                    if (!response.ok) throw new Error(data.detail || 'Detaylar yüklenemedi.');
+
+                    let kalemlerHtml = 'İçerik bulunamadı.';
+                    if (data.kalemler && data.kalemler.length > 0) {
+                        kalemlerHtml = `
+                            <table>
+                                <thead>
+                                    <tr><th>Ürün Adı</th><th>Miktar</th><th>Birim Fiyat</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${data.kalemler.map(k => `
+                                        <tr>
+                                            <td>${k.urun_adi}</td>
+                                            <td>${k.miktar}</td>
+                                            <td>${(k.birim_fiyat || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>`;
+                    }
+                    detayIcerikDiv.innerHTML = `<h4>Sipariş İçeriği</h4>${kalemlerHtml}`;
+                    detaySatiri.dataset.loaded = 'true'; // Verinin yüklendiğini işaretle
+                } catch (error) {
+                    detayIcerikDiv.innerHTML = `<h4>Sipariş İçeriği</h4><p style="color:red;">${error.message}</p>`;
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            const siparislerTablosu = document.getElementById('siparisler-tablosu');
+            const tableInfo = document.getElementById('table-info');
+
+            function slugify(text) {
+                if (!text) return 'bilinmiyor';
+                return text.toString().toLowerCase().replace(/\s+/g, '-').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/[^\w\-]+/g, '');
+            }
+
+            function renderTable(data) {
+                siparislerTablosu.innerHTML = ''; 
+                if (!data || data.length === 0) {
+                    tableInfo.innerHTML = '<p>Gösterilecek sipariş bulunamadı.</p>';
+                    tableInfo.style.display = 'block';
+                    return;
+                }
+                tableInfo.style.display = 'none';
+
+                data.forEach(siparis => {
+                    const durumClass = `status-${slugify(siparis.durum)}`;
+                    const anaSatir = `
+                        <tr id="siparis-${siparis.id}" class="siparis-ana-satir" onclick="toggleSiparisDetay(${siparis.id})">
+                            <td><i class="fas fa-chevron-right expand-icon"></i></td>
+                            <td><strong>${siparis.siparis_kodu}</strong></td>
+                            <td>${siparis.musteri_adi}</td>
+                            <td>${new Date(siparis.siparis_tarihi).toLocaleDateString('tr-TR')}</td>
+                            <td>${(siparis.genel_toplam || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                            <td><span class="status-badge ${durumClass}">${siparis.durum}</span></td>
+                            <td class="action-buttons">
+                                <a href="/fis-yazdir/${siparis.id}" target="_blank" title="Fişi Yazdır"><i class="fas fa-print"></i></a>
+                            </td>
+                        </tr>
+                    `;
+                    // Detay satırı artık boş oluşturuluyor, tıklanınca dolacak
+                    const detaySatiri = `
+                        <tr id="detay-${siparis.id}" class="detay-satiri">
+                            <td colspan="7">
+                                <div class="detay-icerik"></div>
+                            </td>
+                        </tr>
+                    `;
+                    siparislerTablosu.innerHTML += anaSatir + detaySatiri;
+                });
+            }
+            
+            try {
+                // Ana listeyi çeken API çağrısı (basitleştirilmiş)
+                const response = await fetch('/api/satis-fisleri');
+                if (!response.ok) throw new Error('Siparişler sunucudan alınamadı.');
+                const siparisler = await response.json();
+                renderTable(siparisler);
+            } catch (error) {
+                console.error("Hata:", error);
+                tableInfo.innerHTML = `<p style="color:var(--danger-color);">${error.message}</p>`;
+                tableInfo.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

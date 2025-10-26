@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teklif Listesi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --warning-color: #f59e0b;
+            --danger-color: #ef4444; --border-color: #e2e8f0; --teklif-color: #8b5cf6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; color: white; }
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-secondary { background-color: #64748b; }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        .content-card { background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid var(--border-color); border-top: 4px solid var(--teklif-color); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+        .status-badge { padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; color: white; }
+        .status-hazırlanıyor { background-color: var(--text-light); }
+        .status-gönderildi { background-color: var(--primary-color); }
+        .status-onaylandı { background-color: var(--success-color); }
+        .status-reddedildi { background-color: var(--danger-color); }
+        .actions a, .actions button { color: var(--text-light); margin: 0 0.5rem; font-size: 1.2rem; text-decoration: none; background: none; border: none; cursor: pointer; transition: color 0.2s; }
+        .actions a:hover { color: var(--primary-color); }
+        .actions button:hover { color: var(--danger-color); }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-file-signature"></i> Teklif Yönetimi</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Oluşturulan Teklifler</h1>
+            <a href="/teklif-olustur" class="btn btn-primary"><i class="fas fa-plus"></i> Yeni Teklif Oluştur</a>
+        </div>
+        <div class="content-card">
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Teklif Kodu</th><th>Müşteri</th><th>Tarih</th><th>Tutar</th><th>Durum</th><th style="text-align: right;">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teklifler-tablosu"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tbody = document.getElementById('teklifler-tablosu');
+
+            async function loadTeklifler() {
+                try {
+                    const response = await fetch('/api/teklifler');
+                    const teklifler = await response.json();
+                    
+                    tbody.innerHTML = '';
+                    if (teklifler.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem;">Kayıtlı teklif bulunmuyor.</td></tr>';
+                        return;
+                    }
+
+                    teklifler.forEach(teklif => {
+                        const statusClass = `status-${teklif.durum.toLowerCase().replace('ı','i')}`;
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><strong>${teklif.teklif_kodu}</strong></td>
+                                <td>${teklif.musteri_adi}</td>
+                                <td>${new Date(teklif.teklif_tarihi).toLocaleDateString('tr-TR')}</td>
+                                <td>${(teklif.genel_toplam || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                                <td><span class="status-badge ${statusClass}">${teklif.durum}</span></td>
+                                <td class="actions" style="text-align: right;">
+                                    <a href="/teklif-detay/${teklif.id}" target="_blank" title="Görüntüle/Yazdır"><i class="fas fa-eye"></i></a>
+                                    <button onclick="deleteTeklif(${teklif.id})" title="Sil"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                } catch (error) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Teklifler yüklenirken bir hata oluştu.</td></tr>';
+                }
+            }
+
+            window.deleteTeklif = async function(id) {
+                if (!confirm(`Bu teklifi silmek istediğinizden emin misiniz?`)) return;
+                try {
+                    const response = await fetch(`/api/teklifler/${id}`, { method: 'DELETE' });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.detail);
+                    alert(result.message);
+                    await loadTeklifler();
+                } catch (error) {
+                    alert(`Hata: ${error.message}`);
+                }
+            }
+            
+            await loadTeklifler();
+        });
+    </script>
+</body>
+</html>

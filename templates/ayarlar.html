@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistem Ayarları - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a;
+            --text-light: #64748b; --border-color: #e2e8f0; --primary-color: #3b82f6;
+            --success-color: #22c55e; --danger-color: #ef4444;
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); margin: 0; }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-success { background-color: var(--success-color); color: white; border-color: var(--success-color); }
+        .btn-danger { background-color: var(--danger-color); color: white; border-color: var(--danger-color); }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0 0 2rem 0; color: var(--text-dark); }
+        .settings-layout { display: grid; grid-template-columns: 250px 1fr; gap: 2rem; align-items: flex-start; }
+        .settings-nav { background-color: var(--card-bg); border-radius: 0.75rem; box-shadow: var(--card-shadow); padding: 1rem; border: 1px solid var(--border-color); }
+        .nav-link { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.85rem 1rem; border: none; background: none; font-size: 1rem; font-weight: 600; color: var(--text-dark); border-radius: 6px; cursor: pointer; text-align: left; transition: background-color 0.2s, color 0.2s; }
+        .nav-link.active { background-color: #eef2ff; color: var(--primary-color); }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+        .content-card { background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); margin-bottom: 2rem; }
+        h2 { font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem; margin-top: 0; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; color: var(--text-dark); margin-bottom: 0.5rem; font-size:0.9rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem; box-sizing: border-box; }
+        .logo-preview { max-width: 200px; max-height: 100px; border: 1px solid var(--border-color); padding: 0.5rem; border-radius: 0.5rem; object-fit: contain; }
+        .item-list { list-style: none; padding: 0; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content { background: var(--card-bg); padding: 3rem; border-radius: 1rem; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); text-align: center; width: 90%; max-width: 450px; transform: scale(0.95); animation: popIn 0.3s 0.1s ease-out forwards; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .modal-content .icon { font-size: 4rem; color: var(--primary-color); margin-bottom: 1.5rem; }
+        .modal-content h2 { font-size: 2rem; margin-top: 0; margin-bottom: 0.75rem; border-bottom: none; }
+        .modal-content p { color: var(--text-light); margin-bottom: 2rem; line-height: 1.6; }
+        .modal-content input { width: 100%; text-align: center; letter-spacing: 2px; padding: 0.8rem; font-size: 1.1rem; border: 2px solid var(--border-color); border-radius: 0.5rem; margin-bottom: 1.5rem; }
+        .modal-content.shake { animation: shake 0.5s, popIn 0.3s 0.1s ease-out forwards; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); } 20%, 40%, 60%, 80% { transform: translateX(10px); } }
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background-color: var(--text-dark); color: white; padding: 1rem 2rem; border-radius: 0.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; z-index: 3100; }
+        .toast.show { opacity: 1; visibility: visible; }
+    </style>
+</head>
+<body>
+    <div id="passwordModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="icon"><i class="fas fa-shield-alt"></i></div>
+            <h2>Güvenli Alan</h2>
+            <p>Sistem ayarlarına erişmek için lütfen yönetici şifresini girin.</p>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <input type="password" id="passwordInput" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem;">Giriş Yap</button>
+            </form>
+        </div>
+    </div>
+    <div id="pageContent" style="display: none;">
+        <nav class="top-nav">
+            <a href="/" class="logo"><i class="fas fa-cogs"></i> Sistem Ayarları</a>
+            <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+        </nav>
+        <div class="container">
+            <div class="page-header"><h1>Sistem Yönetimi</h1></div>
+            <div class="settings-layout">
+                <aside class="settings-nav">
+                    <button class="nav-link active" data-tab="firma"><i class="fas fa-building"></i> Firma Bilgileri</button>
+                    <button class="nav-link" data-tab="genel"><i class="fas fa-sliders-h"></i> Genel Ayarlar</button>
+                    <button class="nav-link" data-tab="makine"><i class="fas fa-industry"></i> Makine Yönetimi</button>
+                    <button class="nav-link" data-tab="veritabani"><i class="fas fa-database"></i> Veritabanı Araçları</button>
+                </aside>
+                <main class="settings-content">
+                    <div id="firma" class="tab-pane active">
+                        <div class="content-card">
+                            <h2>Firma Bilgileri</h2>
+                            <form id="firmaBilgileriForm">
+                                <div class="form-group"><label for="firmaAdiInput">Firma Adı</label><input type="text" id="firmaAdiInput"></div>
+                                <div class="form-group"><label for="firmaYetkiliInput">Yetkili Kişi</label><input type="text" id="firmaYetkiliInput"></div>
+                                <div class="form-group"><label for="firmaAdresiInput">Adres</label><textarea id="firmaAdresiInput" rows="3"></textarea></div>
+                                <div class="form-group"><label for="firmaTelefonInput">Telefon</label><input type="text" id="firmaTelefonInput"></div>
+                                <div class="form-group"><label for="firmaEmailInput">E-posta</label><input type="email" id="firmaEmailInput"></div>
+                                <div class="form-group"><label for="firmaWebsiteInput">Web Sitesi</label><input type="text" id="firmaWebsiteInput"></div>
+                                <button type="submit" class="btn btn-success" style="width: 100%;"><i class="fas fa-save"></i> Bilgileri Kaydet</button>
+                            </form>
+                        </div>
+                        <div class="content-card">
+                            <h2>Firma Logosu</h2>
+                            <form id="logoUploadForm">
+                                <div class="form-group"><label for="logoInput">Yeni Logo Yükle (PNG, JPG)</label><input type="file" id="logoInput" name="logo" accept="image/png, image/jpeg"></div>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Logoyu Güncelle</button>
+                            </form>
+                            <h3 style="margin-top: 1.5rem;">Mevcut Logo:</h3><img id="logoPreview" src="" alt="Mevcut Logo" class="logo-preview">
+                        </div>
+                    </div>
+                    <div id="genel" class="tab-pane">
+                        <div class="content-card">
+                            <h2>Genel Uygulama Ayarları</h2>
+                            <form id="genelAyarlarForm">
+                                <div class="form-group">
+                                    <label for="maasSifreInput">Maaş Sayfası Şifresi</label>
+                                    <input type="password" id="maasSifreInput" placeholder="Değiştirmek için yeni şifreyi girin">
+                                </div>
+                                <button type="submit" class="btn btn-success" style="width: 100%;"><i class="fas fa-save"></i> Şifreyi Kaydet</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="makine" class="tab-pane">
+                        </div>
+                    <div id="veritabani" class="tab-pane">
+                        </div>
+                </main>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="toast"></div>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const passwordModal = document.getElementById('passwordModal');
+        const passwordForm = document.getElementById('passwordForm');
+        const passwordInput = document.getElementById('passwordInput');
+        const pageContent = document.getElementById('pageContent');
+        const toast = document.getElementById('toast');
+        const CORRECT_PASSWORD = "656514";
+
+        passwordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (passwordInput.value === CORRECT_PASSWORD) {
+                passwordModal.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => {
+                    passwordModal.style.display = 'none';
+                    pageContent.style.display = 'block';
+                    initializePageFunctions(); 
+                }, 300);
+            } else {
+                showToast('Hatalı şifre!', true);
+                const modalContent = passwordModal.querySelector('.modal-content');
+                modalContent.classList.remove('shake');
+                void modalContent.offsetWidth; 
+                modalContent.classList.add('shake');
+                passwordInput.value = '';
+            }
+        });
+
+        function showToast(message, isError = false) {
+            toast.textContent = message;
+            toast.style.backgroundColor = isError ? 'var(--danger-color)' : 'var(--text-dark)';
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        function initializePageFunctions() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    const tabId = e.currentTarget.dataset.tab;
+                    e.currentTarget.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            let settingsMap = {};
+            const firmaAdiInput = document.getElementById('firmaAdiInput');
+            const firmaYetkiliInput = document.getElementById('firmaYetkiliInput');
+            const firmaAdresiInput = document.getElementById('firmaAdresiInput');
+            const firmaTelefonInput = document.getElementById('firmaTelefonInput');
+            const firmaEmailInput = document.getElementById('firmaEmailInput');
+            const firmaWebsiteInput = document.getElementById('firmaWebsiteInput');
+            const logoPreview = document.getElementById('logoPreview');
+            const maasSifreInput = document.getElementById('maasSifreInput');
+
+            async function loadSettings() {
+                try {
+                    const response = await fetch('/api/sistem-ayarlari');
+                    const data = await response.json();
+                    settingsMap = {};
+                    data.forEach(ayar => {
+                        settingsMap[ayar.ayar_anahtari] = { id: ayar.id, deger: ayar.ayar_degeri };
+                    });
+                    if (settingsMap['firma_adi']) firmaAdiInput.value = settingsMap['firma_adi'].deger;
+                    if (settingsMap['firma_yetkili_kisi']) firmaYetkiliInput.value = settingsMap['firma_yetkili_kisi'].deger;
+                    if (settingsMap['firma_adresi']) firmaAdresiInput.value = settingsMap['firma_adresi'].deger;
+                    if (settingsMap['firma_telefon']) firmaTelefonInput.value = settingsMap['firma_telefon'].deger;
+                    if (settingsMap['firma_email']) firmaEmailInput.value = settingsMap['firma_email'].deger;
+                    if (settingsMap['firma_website']) firmaWebsiteInput.value = settingsMap['firma_website'].deger;
+                    if (settingsMap['firma_logo_yolu']) {
+                        logoPreview.src = `${settingsMap['firma_logo_yolu'].deger}?t=${new Date().getTime()}`;
+                    }
+                } catch (error) { showToast('Ayarlar yüklenemedi.', true); }
+            }
+            
+            async function updateSetting(key, value) {
+                if (settingsMap[key]) {
+                    return fetch(`/api/sistem-ayarlari/${settingsMap[key].id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ayar_degeri: value })
+                    });
+                }
+                return Promise.reject(`'${key}' ayarı bulunamadı.`);
+            }
+
+            document.getElementById('firmaBilgileriForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    await Promise.all([
+                        updateSetting('firma_adi', firmaAdiInput.value),
+                        updateSetting('firma_yetkili_kisi', firmaYetkiliInput.value),
+                        updateSetting('firma_adresi', firmaAdresiInput.value),
+                        updateSetting('firma_telefon', firmaTelefonInput.value),
+                        updateSetting('firma_email', firmaEmailInput.value),
+                        updateSetting('firma_website', firmaWebsiteInput.value)
+                    ]);
+                    showToast('Firma bilgileri başarıyla güncellendi!');
+                    await loadSettings();
+                } catch (error) { showToast('Hata: Firma bilgileri güncellenemedi.', true); }
+            });
+
+            document.getElementById('genelAyarlarForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (maasSifreInput.value) {
+                    try {
+                        const response = await updateSetting('maas_sifresi', maasSifreInput.value);
+                        if (!response.ok) throw new Error('Sunucu hatası');
+                        showToast('Maaş şifresi başarıyla güncellendi!');
+                        maasSifreInput.value = '';
+                    } catch { showToast('Şifre güncellenemedi.', true); }
+                } else {
+                    showToast('Lütfen yeni bir şifre girin.', true);
+                }
+            });
+
+            document.getElementById('logoUploadForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const logoInput = document.getElementById('logoInput');
+                if (logoInput.files.length === 0) { showToast('Lütfen bir logo dosyası seçin.', true); return; }
+                const formData = new FormData();
+                formData.append('logo', logoInput.files[0]);
+                try {
+                    const response = await fetch('/api/ayarlar/logo-yukle', { method: 'POST', body: formData });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.detail || 'Logo yüklenemedi.');
+                    showToast('Logo başarıyla güncellendi!');
+                    await loadSettings();
+                } catch (error) { showToast(`Hata: ${error.message}`, true); }
+            });
+
+            loadSettings();
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personel Devam Kontrol Sistemi (PDKS) - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --success-color: #22c55e; 
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-dark); 
+            margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); padding: 0 2rem; height: 70px; 
+            box-shadow: var(--card-shadow); display: flex; align-items: center; 
+            justify-content: space-between; position: sticky; top: 0; z-index: 1000; 
+        }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { 
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; 
+            text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; 
+            font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color);
+            background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; 
+        }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+        .btn-success { background-color: var(--success-color); color: white; border-color: var(--success-color); }
+        .btn-success:hover { background-color: #16a34a; }
+        .btn-danger { background-color: var(--danger-color); color: white; border-color: var(--danger-color); }
+        .btn-danger:hover { background-color: #dc2626; }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        
+        .content-card { 
+            background-color: var(--card-bg); 
+            border-radius: 0.75rem; 
+            padding: 2rem; 
+            box-shadow: var(--card-shadow); 
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+        }
+        .content-card h2 {
+            font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem;
+        }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group select { 
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); 
+            border-radius: 0.5rem; font-size: 1rem; 
+        }
+        
+        .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .personel-listesi { list-style: none; padding: 0; margin: 0; max-height: 500px; overflow-y: auto; }
+        .personel-listesi li { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--border-color); }
+        .personel-listesi li:last-child { border-bottom: none; }
+        .personel-listesi .isim { font-weight: 600; color: var(--text-dark); }
+        .personel-listesi .zaman { color: var(--text-light); font-size: 0.9rem; }
+        .kimse-yok { text-align: center; padding: 2rem; color: var(--text-light); font-size: 1rem; }
+
+        .content-grid { display: grid; grid-template-columns: 450px 1fr; gap: 2rem; align-items: start; }
+
+        @media (max-width: 992px) {
+            .content-grid { grid-template-columns: 1fr; } 
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .content-card { padding: 1.5rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="far fa-clock"></i> PDKS</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Personel Devam Kontrol Sistemi</h1>
+        </div>
+        <div class="content-grid">
+            <div class="content-card">
+                <h2>Giriş / Çıkış İşlemi</h2>
+                <div class="form-group">
+                    <label for="personelSec">İşlem Yapılacak Personel</label>
+                    <select id="personelSec"></select>
+                </div>
+                <div class="button-group">
+                    <button id="girisBtn" class="btn btn-success"><i class="fas fa-sign-in-alt"></i> Giriş Yap</button>
+                    <button id="cikisBtn" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</button>
+                </div>
+            </div>
+            <div class="content-card">
+                <h2>İçeride Olan Personel Listesi</h2>
+                <ul id="iceridekilerListesi" class="personel-listesi">
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API_PREFIX = '/api';
+
+        async function loadPersonelListesi() {
+            try {
+                const response = await fetch(`${API_PREFIX}/personel`);
+                const personeller = await response.json();
+                const select = document.getElementById('personelSec');
+                select.innerHTML = '<option value="">Personel Seçiniz...</option>';
+                personeller.forEach(p => {
+                    select.innerHTML += `<option value="${p.id}">${p.ad_soyad}</option>`;
+                });
+            } catch (error) {
+                console.error('Personel listesi yüklenirken hata:', error);
+                alert('Personel listesi yüklenemedi.');
+            }
+        }
+
+        async function loadIceridekiler() {
+            try {
+                const response = await fetch(`${API_PREFIX}/pdks/iceridekiler`);
+                const iceridekiler = await response.json();
+                const ul = document.getElementById('iceridekilerListesi');
+                ul.innerHTML = '';
+                if (iceridekiler.length === 0) {
+                    ul.innerHTML = '<li class="kimse-yok">İçeride kimse bulunmuyor.</li>';
+                    return;
+                }
+                iceridekiler.forEach(p => {
+                    const girisZamani = new Date(p.giris_zamani).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                    ul.innerHTML += `
+                        <li>
+                            <span class="isim">${p.ad_soyad}</span>
+                            <span class="zaman">Giriş: ${girisZamani}</span>
+                        </li>
+                    `;
+                });
+            } catch (error) {
+                console.error('İçerideki personel listesi yüklenirken hata:', error);
+                alert('İçerideki personel listesi yüklenemedi.');
+            }
+        }
+
+        async function girisYap() {
+            const personel_id = document.getElementById('personelSec').value;
+            if (!personel_id) {
+                alert('Lütfen bir personel seçin.');
+                return;
+            }
+            try {
+                const response = await fetch(`${API_PREFIX}/pdks/giris`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ personel_id: parseInt(personel_id) })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadIceridekiler();
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+
+        async function cikisYap() {
+            const personel_id = document.getElementById('personelSec').value;
+            if (!personel_id) {
+                alert('Lütfen bir personel seçin.');
+                return;
+            }
+            try {
+                const response = await fetch(`${API_PREFIX}/pdks/cikis`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ personel_id: parseInt(personel_id) })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadIceridekiler();
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPersonelListesi();
+            loadIceridekiler();
+            setInterval(loadIceridekiler, 30000); 
+
+            document.getElementById('girisBtn').addEventListener('click', girisYap);
+            document.getElementById('cikisBtn').addEventListener('click', cikisYap);
+        });
+    </script>
+</body>
+</html>

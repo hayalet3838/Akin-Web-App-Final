@@ -1,0 +1,637 @@
+[2025-08-28 20:36:34 +0000] [6893] [INFO] Starting gunicorn 23.0.0
+[2025-08-28 20:36:34 +0000] [6893] [INFO] Listening at: http://0.0.0.0:8000 (6893)
+[2025-08-28 20:36:34 +0000] [6893] [INFO] Using worker: sync
+[2025-08-28 20:36:34 +0000] [6894] [INFO] Booting worker with pid: 6894
+[2025-08-28 20:36:34 +0000] [6895] [INFO] Booting worker with pid: 6895
+[2025-08-28 20:37:03 +0000] [6895] [ERROR] Error handling request /robots.txt
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:37:12 +0000] [6894] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:39:00 +0000] [6894] [INFO] Worker exiting (pid: 6894)
+[2025-08-28 20:39:00 +0000] [6942] [INFO] Booting worker with pid: 6942
+[2025-08-28 20:39:00 +0000] [6895] [INFO] Worker exiting (pid: 6895)
+[2025-08-28 20:39:00 +0000] [6945] [INFO] Booting worker with pid: 6945
+[2025-08-28 20:39:24 +0000] [6965] [INFO] Starting gunicorn 23.0.0
+[2025-08-28 20:39:24 +0000] [6965] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:39:24 +0000] [6965] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:39:25 +0000] [6965] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:39:25 +0000] [6965] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:39:26 +0000] [6965] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:39:26 +0000] [6965] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:39:27 +0000] [6965] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:39:27 +0000] [6965] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:39:28 +0000] [6965] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:39:28 +0000] [6965] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:39:29 +0000] [6965] [ERROR] Can't connect to ('0.0.0.0', 8000)
+[2025-08-28 20:39:31 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:39:32 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:39:32 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:39:33 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:39:34 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:39:35 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:39:35 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:39:35 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:39:35 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:30 +0000] [7009] [INFO] Starting gunicorn 23.0.0
+[2025-08-28 20:40:30 +0000] [7009] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:40:30 +0000] [7009] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:40:31 +0000] [7009] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:40:31 +0000] [7009] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:40:32 +0000] [7009] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:40:32 +0000] [7009] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:40:33 +0000] [7009] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:40:33 +0000] [7009] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:40:34 +0000] [7009] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:40:34 +0000] [7009] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:40:35 +0000] [7009] [ERROR] Can't connect to ('0.0.0.0', 8000)
+[2025-08-28 20:40:39 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:39 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:40 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:40 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:40 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:40 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:40 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:40 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:41 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:41 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:42 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:42 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:40:42 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:42:03 +0000] [7039] [INFO] Starting gunicorn 23.0.0
+[2025-08-28 20:42:03 +0000] [7039] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:42:03 +0000] [7039] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:42:04 +0000] [7039] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:42:04 +0000] [7039] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:42:05 +0000] [7039] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:42:05 +0000] [7039] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:42:06 +0000] [7039] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:42:06 +0000] [7039] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:42:07 +0000] [7039] [ERROR] Connection in use: ('0.0.0.0', 8000)
+[2025-08-28 20:42:07 +0000] [7039] [ERROR] connection to ('0.0.0.0', 8000) failed: [Errno 98] Address already in use
+[2025-08-28 20:42:08 +0000] [7039] [ERROR] Can't connect to ('0.0.0.0', 8000)
+[2025-08-28 20:42:44 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:42:45 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:42:46 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:42:46 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:42:47 +0000] [6942] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:42:47 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:43:23 +0000] [6945] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 20:46:00 +0000] [6893] [INFO] Handling signal: term
+[2025-08-28 20:46:00 +0000] [6942] [INFO] Worker exiting (pid: 6942)
+[2025-08-28 20:46:00 +0000] [6945] [INFO] Worker exiting (pid: 6945)
+[2025-08-28 20:46:00 +0000] [6893] [INFO] Shutting down: Master
+[2025-08-28 20:47:09 +0000] [7107] [INFO] Starting gunicorn 23.0.0
+[2025-08-28 20:47:09 +0000] [7107] [INFO] Listening at: http://0.0.0.0:8000 (7107)
+[2025-08-28 20:47:09 +0000] [7107] [INFO] Using worker: sync
+[2025-08-28 20:47:09 +0000] [7108] [INFO] Booting worker with pid: 7108
+[2025-08-28 20:47:09 +0000] [7108] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+    worker.init_process()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/base.py", line 135, in init_process
+    self.load_wsgi()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+    self.wsgi = self.app.wsgi()
+                ^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/base.py", line 66, in wsgi
+    self.callable = self.load()
+                    ^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+    return self.load_wsgiapp()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+    return util.import_app(self.app_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/util.py", line 370, in import_app
+    mod = importlib.import_module(module)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/adminas/projem/app.py", line 5, in <module>
+    import requests
+ModuleNotFoundError: No module named 'requests'
+[2025-08-28 20:47:09 +0000] [7108] [INFO] Worker exiting (pid: 7108)
+[2025-08-28 20:47:09 +0000] [7109] [INFO] Booting worker with pid: 7109
+[2025-08-28 20:47:09 +0000] [7109] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+    worker.init_process()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/base.py", line 135, in init_process
+    self.load_wsgi()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+    self.wsgi = self.app.wsgi()
+                ^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/base.py", line 66, in wsgi
+    self.callable = self.load()
+                    ^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+    return self.load_wsgiapp()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+    return util.import_app(self.app_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/util.py", line 370, in import_app
+    mod = importlib.import_module(module)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/adminas/projem/app.py", line 5, in <module>
+    import requests
+ModuleNotFoundError: No module named 'requests'
+[2025-08-28 20:47:09 +0000] [7109] [INFO] Worker exiting (pid: 7109)
+[2025-08-28 20:47:09 +0000] [7107] [ERROR] Worker (pid:7108) exited with code 3
+[2025-08-28 20:47:09 +0000] [7107] [ERROR] Worker (pid:7109) was sent SIGTERM!
+[2025-08-28 20:47:09 +0000] [7107] [ERROR] Shutting down: Master
+[2025-08-28 20:47:09 +0000] [7107] [ERROR] Reason: Worker failed to boot.
+[2025-08-28 21:03:00 +0000] [7401] [INFO] Starting gunicorn 23.0.0
+[2025-08-28 21:03:00 +0000] [7401] [INFO] Listening at: http://0.0.0.0:8000 (7401)
+[2025-08-28 21:03:00 +0000] [7401] [INFO] Using worker: sync
+[2025-08-28 21:03:00 +0000] [7402] [INFO] Booting worker with pid: 7402
+[2025-08-28 21:03:00 +0000] [7403] [INFO] Booting worker with pid: 7403
+[2025-08-28 21:03:00 +0000] [7402] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+    worker.init_process()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/base.py", line 135, in init_process
+    self.load_wsgi()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+    self.wsgi = self.app.wsgi()
+                ^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/base.py", line 66, in wsgi
+    self.callable = self.load()
+                    ^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+    return self.load_wsgiapp()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+    return util.import_app(self.app_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/util.py", line 370, in import_app
+    mod = importlib.import_module(module)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/adminas/projem/app.py", line 22, in <module>
+    import jwt
+ModuleNotFoundError: No module named 'jwt'
+[2025-08-28 21:03:00 +0000] [7402] [INFO] Worker exiting (pid: 7402)
+[2025-08-28 21:03:00 +0000] [7403] [ERROR] Exception in worker process
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 608, in spawn_worker
+    worker.init_process()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/base.py", line 135, in init_process
+    self.load_wsgi()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/base.py", line 147, in load_wsgi
+    self.wsgi = self.app.wsgi()
+                ^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/base.py", line 66, in wsgi
+    self.callable = self.load()
+                    ^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/wsgiapp.py", line 57, in load
+    return self.load_wsgiapp()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/wsgiapp.py", line 47, in load_wsgiapp
+    return util.import_app(self.app_uri)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/util.py", line 370, in import_app
+    mod = importlib.import_module(module)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/adminas/projem/app.py", line 22, in <module>
+    import jwt
+ModuleNotFoundError: No module named 'jwt'
+[2025-08-28 21:03:00 +0000] [7403] [INFO] Worker exiting (pid: 7403)
+[2025-08-28 21:03:01 +0000] [7401] [ERROR] Worker (pid:7402) exited with code 3
+[2025-08-28 21:03:01 +0000] [7401] [ERROR] Worker (pid:7403) exited with code 3
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 208, in run
+    self.sleep()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 359, in sleep
+    ready = select.select([self.PIPE[0]], [], [], 1.0)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 241, in handle_chld
+    self.reap_workers()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 529, in reap_workers
+    raise HaltServer(reason, self.WORKER_BOOT_ERROR)
+gunicorn.errors.HaltServer: <HaltServer 'Worker failed to boot.' 3>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/bin/gunicorn", line 8, in <module>
+    sys.exit(run())
+             ^^^^^
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/wsgiapp.py", line 66, in run
+    WSGIApplication("%(prog)s [OPTIONS] [APP_MODULE]", prog=prog).run()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/base.py", line 235, in run
+    super().run()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/app/base.py", line 71, in run
+    Arbiter(self).run()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 228, in run
+    self.halt(reason=inst.reason, exit_status=inst.exit_status)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 341, in halt
+    self.stop()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 395, in stop
+    time.sleep(0.1)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 241, in handle_chld
+    self.reap_workers()
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/arbiter.py", line 529, in reap_workers
+    raise HaltServer(reason, self.WORKER_BOOT_ERROR)
+gunicorn.errors.HaltServer: <HaltServer 'Worker failed to boot.' 3>
+[2025-08-28 21:08:39 +0000] [7545] [INFO] Starting gunicorn 23.0.0
+[2025-08-28 21:08:39 +0000] [7545] [INFO] Listening at: http://0.0.0.0:8000 (7545)
+[2025-08-28 21:08:39 +0000] [7545] [INFO] Using worker: sync
+[2025-08-28 21:08:39 +0000] [7546] [INFO] Booting worker with pid: 7546
+[2025-08-28 21:08:40 +0000] [7547] [INFO] Booting worker with pid: 7547
+[2025-08-28 21:08:45 +0000] [7546] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:08:46 +0000] [7547] [ERROR] Error handling request /favicon.ico
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:33 +0000] [7547] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:33 +0000] [7546] [ERROR] Error handling request /favicon.ico
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:33 +0000] [7547] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:34 +0000] [7547] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:34 +0000] [7546] [ERROR] Error handling request /favicon.ico
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:34 +0000] [7546] [ERROR] Error handling request /favicon.ico
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:34 +0000] [7547] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:34 +0000] [7546] [ERROR] Error handling request /favicon.ico
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:34 +0000] [7547] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:34 +0000] [7546] [ERROR] Error handling request /favicon.ico
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:09:39 +0000] [7546] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:16:51 +0000] [7547] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:16:51 +0000] [7546] [ERROR] Error handling request /favicon.ico
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:34:08 +0000] [7546] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:37:19 +0000] [7546] [INFO] Worker exiting (pid: 7546)
+[2025-08-28 21:37:19 +0000] [7547] [INFO] Worker exiting (pid: 7547)
+[2025-08-28 21:37:20 +0000] [8380] [INFO] Booting worker with pid: 8380
+[2025-08-28 21:37:20 +0000] [8381] [INFO] Booting worker with pid: 8381
+[2025-08-28 21:43:51 +0000] [8380] [ERROR] Error handling request /
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'
+[2025-08-28 21:43:52 +0000] [8381] [ERROR] Error handling request /favicon.ico
+Traceback (most recent call last):
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    self.handle_request(listener, req, client, addr)
+  File "/home/adminas/projem/proje_env/lib/python3.12/site-packages/gunicorn/workers/sync.py", line 177, in handle_request
+    respiter = self.wsgi(environ, resp.start_response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: FastAPI.__call__() missing 1 required positional argument: 'send'

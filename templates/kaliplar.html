@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalıp Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --success-color: #22c55e; 
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-dark); 
+            margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); 
+            padding: 0 2rem; 
+            height: 70px; 
+            box-shadow: var(--card-shadow); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        .logo { 
+            font-size: 1.5rem; 
+            font-weight: 600; 
+            text-decoration: none; 
+            color: var(--text-dark); 
+        }
+        .btn { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 0.5rem; 
+            text-decoration: none; 
+            padding: 0.7rem 1.5rem; 
+            border-radius: 0.5rem; 
+            font-weight: 600; 
+            transition: all 0.2s; 
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-dark);
+            cursor: pointer; 
+        }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+
+        .container { 
+            max-width: 1600px; 
+            margin: 2rem auto; 
+            padding: 0 2rem; 
+        }
+        .page-header { 
+            margin-bottom: 2rem; 
+        }
+        .page-header h1 { 
+            font-size: 2.25rem; 
+            font-weight: 700;
+            margin: 0; 
+        }
+        .content-card { 
+            background-color: var(--card-bg); 
+            border-radius: 0.75rem; 
+            padding: 2rem; 
+            box-shadow: var(--card-shadow); 
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+        }
+        .content-card h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select { 
+            width: 100%; 
+            padding: 0.75rem; 
+            border: 1px solid var(--border-color); 
+            border-radius: 0.5rem; 
+            font-size: 1rem; 
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; white-space: nowrap; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        .action-buttons button { background: none; border: none; font-size: 1.1rem; cursor: pointer; margin: 0 0.25rem; transition: opacity 0.2s; }
+        .action-buttons button:hover { opacity: 0.7; }
+        .action-buttons .edit-btn { color: var(--warning-color); }
+        .action-buttons .delete-btn { color: var(--danger-color); }
+        
+        .content-grid { display: grid; grid-template-columns: 420px 1fr; gap: 2rem; align-items: start;}
+
+        @media (max-width: 992px) {
+            .content-grid { grid-template-columns: 1fr; } 
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .content-card { padding: 1.5rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-cubes"></i> Kalıp Yönetimi</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Kalıp Listesi ve Yönetimi</h1>
+        </div>
+        <div class="content-grid">
+            <div class="content-card">
+                <h2 id="formBaslik">Yeni Kalıp Ekle</h2>
+                <form id="kalipForm">
+                    <input type="hidden" id="kalipId">
+                    <div class="form-group"><label for="kalip_kodu">Kalıp Kodu (*)</label><input type="text" id="kalip_kodu" required></div>
+                    <div class="form-group"><label for="kalip_adi">Kalıp Adı</label><input type="text" id="kalip_adi"></div>
+                    <div class="form-group"><label for="goz_sayisi">Göz Sayısı</label><input type="number" id="goz_sayisi"></div>
+                    <div class="form-group"><label for="cevrim_suresi_sn">Çevrim Süresi (sn)</label><input type="number" id="cevrim_suresi_sn"></div>
+                    <div class="form-group"><label for="garanti_baski_sayisi">Garanti Baskı Sayısı</label><input type="number" id="garanti_baski_sayisi"></div>
+                    <div class="form-group"><label for="lokasyon">Lokasyon</label><input type="text" id="lokasyon"></div>
+                    <div class="form-group"><label for="durum">Durum</label>
+                        <select id="durum">
+                            <option value="Depoda">Depoda</option>
+                            <option value="Üretimde">Üretimde</option>
+                            <option value="Bakımda">Bakımda</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;"><i class="fas fa-save"></i> Kaydet</button>
+                        <button type="button" class="btn" onclick="resetForm()"><i class="fas fa-plus"></i> Yeni Kayıt</button>
+                    </div>
+                </form>
+            </div>
+            <div class="content-card">
+                <h2>Mevcut Kalıplar</h2>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Kod</th><th>Ad</th><th>Göz</th><th>Garanti Baskı</th><th>Lokasyon</th><th>Durum</th><th>İşlemler</th></tr></thead>
+                        <tbody id="kalipListesi"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/kaliplar';
+        const form = document.getElementById('kalipForm');
+
+        async function loadKaliplar() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Kalıplar yüklenemedi.');
+                const kaliplar = await response.json();
+                const tbody = document.getElementById('kalipListesi');
+                tbody.innerHTML = '';
+                if (kaliplar.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">Kayıtlı kalıp bulunmamaktadır.</td></tr>';
+                    return;
+                }
+                kaliplar.forEach(k => {
+                    const garantiBaski = k.garanti_baski_sayisi ? k.garanti_baski_sayisi.toLocaleString('tr-TR') : '∞';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${k.kalip_kodu}</strong></td>
+                            <td>${k.kalip_adi || '-'}</td>
+                            <td>${k.goz_sayisi || '-'}</td>
+                            <td>${garantiBaski}</td>
+                            <td>${k.lokasyon || '-'}</td>
+                            <td>${k.durum || '-'}</td>
+                            <td class="action-buttons">
+                                <button class="edit-btn" title="Düzenle" onclick='editKalip(${JSON.stringify(k)})'><i class="fas fa-edit"></i></button>
+                                <button class="delete-btn" title="Sil" onclick="deleteKalip(${k.id})"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+            } catch (error) {
+                console.error("Kalıplar yüklenirken hata:", error);
+                alert("Kalıplar yüklenemedi.");
+            }
+        }
+
+        async function createOrUpdateKalip(event) {
+            event.preventDefault();
+            const id = document.getElementById('kalipId').value;
+            const data = {
+                kalip_kodu: document.getElementById('kalip_kodu').value,
+                kalip_adi: document.getElementById('kalip_adi').value,
+                goz_sayisi: parseInt(document.getElementById('goz_sayisi').value) || null,
+                cevrim_suresi_sn: parseInt(document.getElementById('cevrim_suresi_sn').value) || null,
+                garanti_baski_sayisi: parseInt(document.getElementById('garanti_baski_sayisi').value) || null,
+                lokasyon: document.getElementById('lokasyon').value,
+                durum: document.getElementById('durum').value
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_URL}/${id}` : API_URL;
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                resetForm();
+                await loadKaliplar();
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+        
+        function editKalip(kalip) {
+            document.getElementById('formBaslik').innerText = 'Kalıp Bilgilerini Düzenle';
+            document.getElementById('kalipId').value = kalip.id;
+            document.getElementById('kalip_kodu').value = kalip.kalip_kodu;
+            document.getElementById('kalip_adi').value = kalip.kalip_adi;
+            document.getElementById('goz_sayisi').value = kalip.goz_sayisi;
+            document.getElementById('cevrim_suresi_sn').value = kalip.cevrim_suresi_sn;
+            document.getElementById('garanti_baski_sayisi').value = kalip.garanti_baski_sayisi;
+            document.getElementById('lokasyon').value = kalip.lokasyon;
+            document.getElementById('durum').value = kalip.durum;
+            window.scrollTo(0, 0);
+        }
+
+        async function deleteKalip(id) {
+            if (!confirm('Bu kalıbı silmek istediğinizden emin misiniz?')) return;
+            try {
+                const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadKaliplar();
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('formBaslik').innerText = 'Yeni Kalıp Ekle';
+            form.reset();
+            document.getElementById('kalipId').value = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadKaliplar();
+            form.addEventListener('submit', createOrUpdateKalip);
+            window.editKalip = editKalip;
+            window.deleteKalip = deleteKalip;
+            window.resetForm = resetForm;
+        });
+    </script>
+</body>
+</html>

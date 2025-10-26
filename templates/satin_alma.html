@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satın Alma Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --success-color: #22c55e; 
+            --warning-color: #f97316; /* Turuncu tonu güncellendi */
+            --danger-color: #ef4444;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-dark); 
+            margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); padding: 0 2rem; height: 70px; 
+            box-shadow: var(--card-shadow); display: flex; align-items: center; 
+            justify-content: space-between; position: sticky; top: 0; z-index: 1000; 
+        }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { 
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; 
+            text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; 
+            font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color);
+            background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; 
+        }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; transform: translateY(-2px); }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; transform: translateY(-2px); }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        
+        .content-card { 
+            background-color: var(--card-bg); 
+            border-radius: 0.75rem; 
+            padding: 2rem; 
+            box-shadow: var(--card-shadow); 
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+        }
+        .content-card h2 {
+            font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select { 
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); 
+            border-radius: 0.5rem; font-size: 1rem; 
+        }
+        .form-group input[readonly] { background-color: #f8fafc; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; white-space: nowrap; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        .status-badge { padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; color: white; white-space: nowrap; }
+        .status-talep-edildi { background-color: var(--warning-color); }
+        .status-sipariş-edildi { background-color: var(--primary-color); }
+        .status-tamamlandı { background-color: var(--success-color); }
+
+        .action-btn { 
+            padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600; white-space: nowrap;
+            border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.2s;
+            background-color: var(--text-light); color: white; 
+        }
+        .action-btn:hover { background-color: var(--text-dark); transform: translateY(-2px); }
+        .action-btn:disabled { background-color: #cbd5e1; cursor: not-allowed; transform: none; }
+        
+        .content-grid { display: grid; grid-template-columns: 420px 1fr; gap: 2rem; align-items: start; }
+
+        @media (max-width: 992px) { .content-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .content-card { padding: 1.5rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-shopping-cart"></i> Satın Alma</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Satın Alma Talep Yönetimi</h1>
+        </div>
+        
+        <div class="content-grid">
+            <div class="content-card">
+                <h2>Yeni Talep Oluştur</h2>
+                <form id="talepForm">
+                    <div class="form-group">
+                        <label for="hammaddeSelect">Hammadde (*)</label>
+                        <select id="hammaddeSelect" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="talepMiktar">Miktar (*)</label>
+                        <input type="number" id="talepMiktar" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="talepBirim">Birim</label>
+                        <input type="text" id="talepBirim" readonly>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-plus"></i> Talep Oluştur
+                    </button>
+                </form>
+            </div>
+            <div class="content-card">
+                <h2>Mevcut Talepler</h2>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Hammadde</th>
+                                <th>Miktar</th>
+                                <th>Birim</th>
+                                <th>Durum</th>
+                                <th>Tarih</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="talepler-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tbody = document.getElementById('talepler-tbody');
+        const hammaddeSelect = document.getElementById('hammaddeSelect');
+        const talepBirimInput = document.getElementById('talepBirim');
+        const talepForm = document.getElementById('talepForm');
+
+        async function loadHammaddeler() {
+            try {
+                const response = await fetch('/api/hammaddeler');
+                const hammaddeler = await response.json();
+                hammaddeSelect.innerHTML = '<option value="">Hammadde Seçiniz...</option>';
+                hammaddeler.forEach(h => {
+                    const option = document.createElement('option');
+                    option.value = h.id;
+                    option.textContent = h.hammadde_adi;
+                    option.dataset.birim = h.birim;
+                    hammaddeSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Hammadde listesi yüklenemedi:", error);
+            }
+        }
+
+        hammaddeSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            talepBirimInput.value = selectedOption.dataset.birim || '';
+        });
+
+        async function loadTalepler() {
+            try {
+                const response = await fetch('/api/satin-alma-talepleri');
+                const data = await response.json();
+                tbody.innerHTML = '';
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 2rem;">Aktif satın alma talebi bulunmuyor.</td></tr>';
+                    return;
+                }
+                data.forEach(talep => {
+                    const formattedDate = new Date(talep.talep_tarihi).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const statusClass = 'status-' + (talep.durum || 'bilinmiyor').toLowerCase().replace(/ /g, '-');
+                    
+                    let actionButtons = '';
+                    if (talep.durum === 'Talep Edildi') {
+                        actionButtons = `<button class="action-btn" onclick="updateStatus(${talep.id}, 'Sipariş Edildi')">Sipariş Edildi Yap</button>`;
+                    } else if (talep.durum === 'Sipariş Edildi') {
+                        actionButtons = `<button class="action-btn" onclick="updateStatus(${talep.id}, 'Tamamlandı')">Teslim Alındı Yap</button>`;
+                    } else {
+                        actionButtons = '<span>-</span>';
+                    }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>#${talep.id}</strong></td>
+                            <td>${talep.hammadde_adi || 'Bilinmeyen'}</td>
+                            <td>${talep.talep_edilen_miktar}</td>
+                            <td>${talep.birim}</td>
+                            <td><span class="status-badge ${statusClass}">${talep.durum}</span></td>
+                            <td>${formattedDate}</td>
+                            <td>${actionButtons}</td>
+                        </tr>`;
+                });
+            } catch (error) {
+                console.error("Talepler yüklenemedi:", error);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 2rem;">Talepler yüklenirken bir hata oluştu.</td></tr>';
+            }
+        }
+
+        talepForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const hammaddeId = hammaddeSelect.value;
+            const miktar = document.getElementById('talepMiktar').value;
+            const birim = talepBirimInput.value;
+
+            if (!hammaddeId || !miktar) {
+                alert('Lütfen hammadde seçip miktar giriniz.');
+                return;
+            }
+
+            const talepData = {
+                hammadde_id: parseInt(hammaddeId),
+                miktar: parseFloat(miktar),
+                birim: birim
+            };
+
+            try {
+                // Not: Bu endpoint'in backend'de oluşturulması gerekir.
+                // Önceki MRP sayfasındaki gibi /api/planlama/satin-alma-talebi-olustur kullanılabilir
+                // veya yeni bir tane /api/satin-alma-talepleri (POST) oluşturulabilir.
+                const response = await fetch('/api/satin-alma-talepleri', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(talepData)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                
+                alert(result.message);
+                talepForm.reset();
+                talepBirimInput.value = '';
+                await loadTalepler();
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        });
+
+        window.updateStatus = async function(talepId, newStatus) {
+            if (!confirm(`Talep #${talepId} durumu "${newStatus}" olarak güncellenecek. Emin misiniz?`)) return;
+            
+            try {
+                const response = await fetch(`/api/satin-alma-talepleri/${talepId}/durum`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ durum: newStatus })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                
+                alert(result.message);
+                await loadTalepler();
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+
+        loadHammaddeler();
+        loadTalepler();
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Teslim Fişi Yazdır</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #e2e8f0; display: flex; flex-direction: column; align-items: center; padding: 2rem 0; line-height: 1.6; color: #334155; }
+        .page-actions { margin-bottom: 2rem; display: flex; gap: 1rem; }
+        .btn-action { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; border: none; cursor: pointer; color: white; }
+        .btn-back { background-color: #64748b; }
+        .btn-print { background: #16a34a; }
+        .page-container { width: 210mm; min-height: 148mm; background-color: white; padding: 15mm; box-shadow: 0 0 15px rgba(0,0,0,0.1); font-size: 10pt; }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 1rem; margin-bottom: 1rem; }
+        .header .company-info img { max-width: 150px; max-height: 60px; }
+        .company-details strong { font-size: 12pt; color: #0f172a; }
+        .document-title h1 { font-size: 24pt; font-weight: 300; letter-spacing: 2px; color: #0f172a; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1.5rem; }
+        h2 { font-size: 11pt; color: #475569; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-top: 0; }
+        .info-box p strong { display: inline-block; width: 80px; color: #64748b; }
+        .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 10pt; }
+        .items-table th, .items-table td { border-bottom: 1px solid #e2e8f0; padding: 10px 5px; }
+        .items-table thead th { background-color: #f8fafc; color: #64748b; font-size: 9pt; }
+        .text-right { text-align: right; }
+        .totals { margin-top: 20px; float: right; width: 280px; }
+        .totals .grand-total td { font-weight: bold; font-size: 14pt; border-top: 2px solid #0f172a; padding-top: 10px; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 9pt; color: #94a3b8; clear: both; }
+        @media print { @page { size: A5 landscape; margin: 0; } body { background-color: white; } .page-container { box-shadow: none; } .page-actions { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="page-actions">
+        <a href="/satis-fisleri" class="btn-action btn-back"><i class="fas fa-arrow-left"></i> Satış Listesine Dön</a>
+        <button id="print-button" class="btn-action btn-print" onclick="window.print()"><i class="fas fa-print"></i> Bu Fişi Yazdır</button>
+    </div>
+    <div class="page-container">
+        <header class="header">
+            <div class="company-info">
+                <img id="sirket_logo" src="" alt="Firma Logosu">
+                <div class="company-details">
+                    <strong id="sirket_adi"></strong>
+                    <p id="sirket_adresi"></p>
+                    <p><span id="sirket_telefon"></span> | <span id="sirket_email"></span></p>
+                </div>
+            </div>
+        </header>
+        <div class="document-title"><h1>TESLİM FİŞİ</h1></div>
+        <div class="info-grid">
+            <div class="info-box">
+                <h2>MÜŞTERİ BİLGİLERİ</h2>
+                <p><strong>Firma:</strong> <span id="musteri_adi"></span></p>
+                <p><strong>Adres:</strong> <span id="musteri_adres"></span></p>
+                <p><strong>Telefon:</strong> <span id="musteri_tel"></span></p>
+                <p><strong>Vergi No:</strong> <span id="musteri_vkn"></span></p>
+            </div>
+            <div class="info-box">
+                <h2>FİŞ BİLGİLERİ</h2>
+                <p><strong>Fiş No:</strong> <span id="fis_no"></span></p>
+                <p><strong>Tarih:</strong> <span id="fis_tarihi"></span></p>
+            </div>
+        </div>
+        <main>
+            <table class="items-table">
+                <thead><tr><th>Ürün Adı</th><th class="text-right">Miktar</th><th class="text-right">Birim Fiyat</th><th class="text-right">KDV (%)</th><th class="text-right">Toplam</th></tr></thead>
+                <tbody id="kalemler"></tbody>
+            </table>
+            <div class="totals">
+                <table>
+                    <tbody>
+                        <tr><td>Ara Toplam:</td><td class="text-right"><span id="ara_toplam"></span> ₺</td></tr>
+                        <tr><td>Toplam KDV:</td><td class="text-right"><span id="kdv_toplami"></span> ₺</td></tr>
+                        <tr class="grand-total"><td>GENEL TOPLAM:</td><td class="text-right"><span id="genel_toplam"></span> ₺</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+        <footer class="footer"><p>Bu belge, resmi fatura yerine geçmez.</p></footer>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const siparisId = window.location.pathname.split('/').pop();
+        try {
+            const response = await fetch(`/api/satis-fisleri/${siparisId}`);
+            if (!response.ok) { throw new Error((await response.json()).detail); }
+            const data = await response.json();
+            const { fis, kalemler, sirket } = data;
+            
+            document.title = `Fiş #${fis.siparis_kodu}`;
+            document.getElementById('sirket_logo').src = sirket.firma_logo_yolu || '';
+            document.getElementById('sirket_adi').textContent = sirket.firma_adi || '';
+            document.getElementById('sirket_adresi').textContent = sirket.firma_adresi || '';
+            document.getElementById('sirket_telefon').textContent = sirket.firma_telefon || '';
+            document.getElementById('sirket_email').textContent = sirket.firma_email || '';
+            document.getElementById('fis_no').textContent = fis.siparis_kodu;
+            document.getElementById('fis_tarihi').textContent = new Date(fis.siparis_tarihi).toLocaleDateString('tr-TR');
+            document.getElementById('musteri_adi').textContent = fis.musteri_adi;
+            document.getElementById('musteri_adres').textContent = fis.adres || 'Belirtilmemiş';
+            document.getElementById('musteri_tel').textContent = fis.telefon || 'Belirtilmemiş';
+            document.getElementById('musteri_vkn').textContent = fis.vergi_no || 'Belirtilmemiş';
+            
+            const kalemlerTbody = document.getElementById('kalemler');
+            const formatCurrency = (val) => (val || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            kalemler.forEach(k => {
+                const tr = document.createElement('tr');
+                const toplam = k.miktar * k.birim_fiyat * (1 + (k.kdv_orani || 0) / 100);
+                tr.innerHTML = `
+                    <td>${k.urun_adi}</td>
+                    <td class="text-right">${k.miktar}</td>
+                    <td class="text-right">${formatCurrency(k.birim_fiyat)}</td>
+                    <td class="text-right">%${k.kdv_orani || 0}</td>
+                    <td class="text-right">${formatCurrency(toplam)}</td>`;
+                kalemlerTbody.appendChild(tr);
+            });
+
+            document.getElementById('ara_toplam').textContent = formatCurrency(fis.toplam_tutar);
+            document.getElementById('kdv_toplami').textContent = formatCurrency(fis.kdv_tutari);
+            document.getElementById('genel_toplam').textContent = formatCurrency(fis.genel_toplam);
+        } catch (error) {
+            document.body.innerHTML = `<h1>Hata: ${error.message}</h1>`;
+        }
+    });
+    </script>
+</body>
+</html>

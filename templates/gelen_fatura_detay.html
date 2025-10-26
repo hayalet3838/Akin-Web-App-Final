@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fatura Detayı</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; color: #0f172a; margin: 0; padding: 2rem; }
+        .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); font-size: 16px; line-height: 24px; background-color: #fff; }
+        .invoice-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
+        /* GÜNCELLEME: Stil adı "logo" yerine "title" olarak değiştirildi */
+        .invoice-header .title { font-size: 1.8rem; font-weight: bold; color: #0f172a; max-width: 60%; }
+        .invoice-header .invoice-details { text-align: right; }
+        .invoice-details strong { display: block; }
+        .supplier-info { margin-bottom: 40px; }
+        .invoice-table { width: 100%; line-height: inherit; text-align: left; border-collapse: collapse; }
+        .invoice-table td { padding: 8px; vertical-align: top; }
+        .invoice-table tr.heading td { background: #eee; border-bottom: 1px solid #ddd; font-weight: bold; }
+        .invoice-table tr.item td { border-bottom: 1px solid #eee; }
+        .invoice-table tr.total td { border-top: 2px solid #eee; font-weight: bold; text-align: right; }
+        .text-right { text-align: right; }
+        .page-actions { text-align: center; margin-top: 40px; }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 1.8rem; border-radius: 0.5rem; font-weight: 600; border: none; cursor: pointer; background-color: #3b82f6; color: white; }
+        @media print { body { padding: 0; } .page-actions { display: none; } .invoice-box { box-shadow: none; border: none; margin: 0; max-width: 100%; } }
+    </style>
+</head>
+<body>
+    <div class="invoice-box">
+        <div class="invoice-header">
+            <div class="title">ALIŞ FATURASI</div>
+            <div class="invoice-details">
+                <strong id="fatura_numarasi">Fatura #: Yükleniyor...</strong>
+                <span id="fatura_tarihi">Tarih: </span>
+                <span id="vade_tarihi">Vade: </span>
+            </div>
+        </div>
+        <div class="supplier-info">
+            <strong>Tedarikçi Bilgileri:</strong>
+            <div id="tedarikci_adi">Firma Adı</div>
+            <div>Vergi Dairesi: <span id="vergi_dairesi"></span></div>
+            <div>Vergi No: <span id="vergi_no"></span></div>
+        </div>
+        <table class="invoice-table">
+            <thead>
+                <tr class="heading">
+                    <td>Açıklama</td>
+                    <td class="text-right">Miktar</td>
+                    <td class="text-right">Birim Fiyat</td>
+                    <td class="text-right">Toplam</td>
+                </tr>
+            </thead>
+            <tbody id="kalemler-tablosu">
+                </tbody>
+        </table>
+        <table style="width: 100%; margin-top: 30px;">
+             <tr class="total"><td></td><td>Ara Toplam: <span id="ara_toplam"></span></td></tr>
+             <tr class="total"><td></td><td>KDV Toplamı: <span id="kdv_toplami"></span></td></tr>
+             <tr class="total" style="font-size: 1.2em;"><td></td><td>Genel Toplam: <strong id="genel_toplam"></strong></td></tr>
+        </table>
+    </div>
+    <div class="page-actions">
+        <button class="btn" onclick="window.print();"><i class="fas fa-print"></i> Yazdır</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const pathParts = window.location.pathname.split('/');
+            const faturaId = pathParts[pathParts.length - 1];
+
+            if (!faturaId || isNaN(faturaId)) {
+                document.body.innerHTML = '<h1>Geçersiz Fatura ID</h1>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/gelen-faturalar/${faturaId}`);
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail);
+
+                const { fatura, kalemler } = data;
+
+                // Fatura bilgilerini doldur
+                document.title = `Fatura #${fatura.fatura_numarasi}`;
+                document.getElementById('fatura_numarasi').textContent = `Fatura #: ${fatura.fatura_numarasi}`;
+                document.getElementById('fatura_tarihi').textContent = `Tarih: ${new Date(fatura.fatura_tarihi).toLocaleDateString('tr-TR')}`;
+                document.getElementById('vade_tarihi').textContent = `Vade: ${new Date(fatura.vade_tarihi).toLocaleDateString('tr-TR')}`;
+                
+                // Tedarikçi bilgilerini doldur
+                document.getElementById('tedarikci_adi').textContent = fatura.firma_adi;
+                document.getElementById('vergi_dairesi').textContent = fatura.vergi_dairesi;
+                document.getElementById('vergi_no').textContent = fatura.vergi_no;
+
+                // Fatura kalemlerini doldur
+                const kalemlerTbody = document.getElementById('kalemler-tablosu');
+                kalemlerTbody.innerHTML = '';
+                kalemler.forEach(k => {
+                    kalemlerTbody.innerHTML += `
+                        <tr class="item">
+                            <td>${k.aciklama}</td>
+                            <td class="text-right">${k.miktar} ${k.birim}</td>
+                            <td class="text-right">${(k.birim_fiyat || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                            <td class="text-right">${(k.toplam_fiyat || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                        </tr>
+                    `;
+                });
+
+                // Toplamları doldur
+                const formatCurrency = (val) => (val || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                document.getElementById('ara_toplam').textContent = formatCurrency(fatura.toplam_tutar);
+                document.getElementById('kdv_toplami').textContent = formatCurrency(fatura.kdv_tutari);
+                document.getElementById('genel_toplam').textContent = formatCurrency(fatura.genel_toplam);
+
+            } catch (error) {
+                document.body.innerHTML = `<h1>Hata: ${error.message}</h1>`;
+            }
+        });
+    </script>
+</body>
+</html>

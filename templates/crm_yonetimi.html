@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM / Cari Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --warning-color: #f59e0b;
+            --danger-color: #ef4444; --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+        .btn-success { background-color: var(--success-color); color: white; border-color: var(--success-color); }
+        .btn-success:hover { background-color: #16a34a; }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        
+        .tabs { display: flex; border-bottom: 2px solid var(--border-color); }
+        .tab-link {
+            padding: 1rem 1.5rem; border: none; background: none; cursor: pointer; font-size: 1.1rem;
+            font-weight: 600; color: var(--text-light); border-bottom: 4px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .tab-link:hover { color: var(--text-dark); }
+        .tab-link.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .content-card {
+            background-color: var(--card-bg); padding: 2rem; border-radius: 0 0.75rem 0.75rem 0.75rem;
+            box-shadow: var(--card-shadow); border: 1px solid var(--border-color); border-top: none;
+        }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        th { background-color: #f8fafc; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; color: var(--text-light); }
+        .action-buttons button { background: none; border: none; font-size: 1.1rem; cursor: pointer; margin: 0 0.3rem; color: var(--text-light); transition: color 0.2s; }
+        .action-buttons .edit-btn:hover { color: var(--primary-color); }
+        .action-buttons .delete-btn:hover { color: var(--danger-color); }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background-color: var(--card-bg); border-radius: 1rem; padding: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.3); width: 90%; max-width: 600px; transform: scale(0.95); transition: transform 0.3s ease; }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { margin: 0; font-size: 1.5rem; border: none; padding: 0; }
+        .close-btn { background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--text-light); transition: color 0.2s; }
+        .close-btn:hover { color: var(--text-dark); }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group textarea { padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem; }
+        .full-width { grid-column: 1 / -1; }
+        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: flex-end; }
+        
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-address-book"></i> CRM / Cari Yönetimi</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Müşteri ve Tedarikçi Yönetimi</h1>
+            <div>
+                <button id="yeniMusteriBtn" class="btn btn-success"><i class="fas fa-plus"></i> Yeni Müşteri Ekle</button>
+                <button id="yeniTedarikciBtn" class="btn btn-success" style="display: none;"><i class="fas fa-plus"></i> Yeni Tedarikçi Ekle</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-link active" data-tab="musteriler">Müşteriler</button>
+            <button class="tab-link" data-tab="tedarikciler">Tedarikçiler</button>
+        </div>
+
+        <div id="musteriler" class="tab-content active">
+            <div class="content-card">
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead><tr><th>Ad</th><th>Sorumlu Kişi</th><th>Telefon</th><th>Vergi Dairesi</th><th>Vergi No</th><th>İşlemler</th></tr></thead>
+                        <tbody id="musteri-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="tedarikciler" class="tab-content">
+            <div class="content-card">
+                 <div style="overflow-x: auto;">
+                    <table>
+                        <thead><tr><th>Firma Adı</th><th>Yetkili Kişi</th><th>Telefon</th><th>Vergi Dairesi</th><th>Vergi No</th><th>İşlemler</th></tr></thead>
+                        <tbody id="tedarikci-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="musteriModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="musteriModalBaslik">Yeni Müşteri Ekle</h2>
+                <button class="close-btn" data-modal="musteriModal">&times;</button>
+            </div>
+            <form id="musteriForm">
+                <input type="hidden" id="editMusteriId">
+                <div class="form-grid">
+                    <div class="form-group full-width"><label for="musteriAd">Ad / Firma Adı (*)</label><input type="text" id="musteriAd" required></div>
+                    <div class="form-group"><label for="sorumluKisi">Sorumlu Kişi</label><input type="text" id="sorumluKisi"></div>
+                    <div class="form-group"><label for="telefon">Telefon</label><input type="text" id="telefon"></div>
+                    <div class="form-group"><label for="email">Email</label><input type="email" id="email"></div>
+                    <div class="form-group"><label for="musteriVergiDairesi">Vergi Dairesi</label><input type="text" id="musteriVergiDairesi"></div>
+                    <div class="form-group"><label for="musteriVergiNo">Vergi No</label><input type="text" id="musteriVergiNo"></div>
+                    <div class="form-group full-width"><label for="adres">Adres</label><textarea id="adres" rows="3"></textarea></div>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary close-btn" data-modal="musteriModal">İptal</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="tedarikciModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tedarikciModalBaslik">Yeni Tedarikçi Ekle</h2>
+                <button class="close-btn" data-modal="tedarikciModal">&times;</button>
+            </div>
+            <form id="tedarikciForm">
+                <input type="hidden" id="editTedarikciId">
+                <div class="form-grid">
+                    <div class="form-group full-width"><label for="firmaAdi">Firma Adı (*)</label><input type="text" id="firmaAdi" required></div>
+                    <div class="form-group"><label for="yetkiliKisi">Yetkili Kişi</label><input type="text" id="yetkiliKisi"></div>
+                    <div class="form-group"><label for="tedarikciTelefon">Telefon</label><input type="text" id="tedarikciTelefon"></div>
+                    <div class="form-group"><label for="tedarikciEmail">Email</label><input type="email" id="tedarikciEmail"></div>
+                    <div class="form-group"><label for="tedarikciVergiDairesi">Vergi Dairesi</label><input type="text" id="tedarikciVergiDairesi"></div>
+                    <div class="form-group"><label for="tedarikciVergiNo">Vergi No</label><input type="text" id="tedarikciVergiNo"></div>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary close-btn" data-modal="tedarikciModal">İptal</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_PREFIX = '/api';
+
+        async function loadData() {
+            try {
+                const [musteriResponse, tedarikciResponse] = await Promise.all([
+                    fetch(`${API_PREFIX}/musteriler`),
+                    fetch(`${API_PREFIX}/tedarikciler`)
+                ]);
+                const musteriler = await musteriResponse.json();
+                const tedarikciler = await tedarikciResponse.json();
+                renderMusteriler(musteriler);
+                renderTedarikciler(tedarikciler);
+            } catch (error) { console.error("Veri yüklenirken hata:", error); }
+        }
+
+        function renderMusteriler(list) {
+            const tbody = document.getElementById('musteri-tbody');
+            tbody.innerHTML = '';
+            if (!list || list.length === 0) return tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding:2rem;">Kayıtlı müşteri bulunmuyor.</td></tr>';
+            list.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${item.ad || '-'}</strong></td>
+                        <td>${item.sorumlu_kisi || '-'}</td>
+                        <td>${item.telefon || '-'}</td>
+                        <td>${item.vergi_dairesi || '-'}</td>
+                        <td>${item.vergi_no || '-'}</td>
+                        <td class="action-buttons">
+                            <button class="edit-btn" title="Düzenle" onclick='editMusteri(${JSON.stringify(item)})'><i class="fas fa-pencil"></i></button>
+                            <button class="delete-btn" title="Sil" onclick="deleteMusteri(${item.id})"><i class="fas fa-trash-can"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function renderTedarikciler(list) {
+            const tbody = document.getElementById('tedarikci-tbody');
+            tbody.innerHTML = '';
+            if (!list || list.length === 0) return tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding:2rem;">Kayıtlı tedarikçi bulunmuyor.</td></tr>';
+            list.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${item.firma_adi || '-'}</strong></td>
+                        <td>${item.yetkili_kisi || '-'}</td>
+                        <td>${item.telefon || '-'}</td>
+                        <td>${item.vergi_dairesi || '-'}</td>
+                        <td>${item.vergi_no || '-'}</td>
+                        <td class="action-buttons">
+                            <button class="edit-btn" title="Düzenle" onclick='editTedarikci(${JSON.stringify(item)})'><i class="fas fa-pencil"></i></button>
+                            <button class="delete-btn" title="Sil" onclick="deleteTedarikci(${item.id})"><i class="fas fa-trash-can"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        async function handleMusteriSubmit(event) {
+            event.preventDefault();
+            const id = document.getElementById('editMusteriId').value;
+            const data = {
+                ad: document.getElementById('musteriAd').value,
+                sorumlu_kisi: document.getElementById('sorumluKisi').value,
+                telefon: document.getElementById('telefon').value,
+                email: document.getElementById('email').value,
+                vergi_dairesi: document.getElementById('musteriVergiDairesi').value,
+                vergi_no: document.getElementById('musteriVergiNo').value,
+                adres: document.getElementById('adres').value
+            };
+            const url = id ? `${API_PREFIX}/musteriler/${id}` : `${API_PREFIX}/musteriler`;
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                closeModal('musteriModal');
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+
+        function editMusteri(item) {
+            document.getElementById('musteriForm').reset();
+            document.getElementById('musteriModalBaslik').textContent = 'Müşteriyi Düzenle';
+            document.getElementById('editMusteriId').value = item.id;
+            document.getElementById('musteriAd').value = item.ad;
+            document.getElementById('sorumluKisi').value = item.sorumlu_kisi;
+            document.getElementById('telefon').value = item.telefon;
+            document.getElementById('email').value = item.email;
+            document.getElementById('musteriVergiDairesi').value = item.vergi_dairesi || '';
+            document.getElementById('musteriVergiNo').value = item.vergi_no || '';
+            document.getElementById('adres').value = item.adres;
+            openModal('musteriModal');
+        }
+
+        async function deleteMusteri(id) {
+            if (!confirm("Bu müşteriyi silmek istediğinizden emin misiniz?")) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/musteriler/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+
+        async function handleTedarikciSubmit(event) {
+            event.preventDefault();
+            const id = document.getElementById('editTedarikciId').value;
+            const data = {
+                firma_adi: document.getElementById('firmaAdi').value,
+                yetkili_kisi: document.getElementById('yetkiliKisi').value,
+                telefon: document.getElementById('tedarikciTelefon').value,
+                email: document.getElementById('tedarikciEmail').value,
+                vergi_dairesi: document.getElementById('tedarikciVergiDairesi').value,
+                vergi_no: document.getElementById('tedarikciVergiNo').value
+            };
+            const url = id ? `${API_PREFIX}/tedarikciler/${id}` : `${API_PREFIX}/tedarikciler`;
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                closeModal('tedarikciModal');
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+        
+        function editTedarikci(item) {
+            document.getElementById('tedarikciForm').reset();
+            document.getElementById('tedarikciModalBaslik').textContent = 'Tedarikçiyi Düzenle';
+            document.getElementById('editTedarikciId').value = item.id;
+            document.getElementById('firmaAdi').value = item.firma_adi;
+            document.getElementById('yetkiliKisi').value = item.yetkili_kisi;
+            document.getElementById('tedarikciTelefon').value = item.telefon;
+            document.getElementById('tedarikciEmail').value = item.email;
+            document.getElementById('tedarikciVergiDairesi').value = item.vergi_dairesi || '';
+            document.getElementById('tedarikciVergiNo').value = item.vergi_no || '';
+            openModal('tedarikciModal');
+        }
+
+        async function deleteTedarikci(id) {
+            if (!confirm("Bu tedarikçiyi silmek istediğinizden emin misiniz?")) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/tedarikciler/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+        
+        function openModal(modalId) { document.getElementById(modalId).classList.add('active'); }
+        function closeModal(modalId) { document.getElementById(modalId).classList.remove('active'); }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            
+            document.getElementById('musteriForm').addEventListener('submit', handleMusteriSubmit);
+            document.getElementById('tedarikciForm').addEventListener('submit', handleTedarikciSubmit);
+
+            const tabs = document.querySelectorAll('.tab-link');
+            const yeniMusteriBtn = document.getElementById('yeniMusteriBtn');
+            const yeniTedarikciBtn = document.getElementById('yeniTedarikciBtn');
+
+            function switchTab(tabName) {
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tabs.forEach(t => t.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+                document.querySelector(`.tab-link[data-tab="${tabName}"]`).classList.add('active');
+                yeniMusteriBtn.style.display = tabName === 'musteriler' ? 'inline-flex' : 'none';
+                yeniTedarikciBtn.style.display = tabName === 'tedarikciler' ? 'inline-flex' : 'none';
+            }
+
+            tabs.forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab)));
+            
+            yeniMusteriBtn.addEventListener('click', () => {
+                document.getElementById('musteriForm').reset();
+                document.getElementById('editMusteriId').value = '';
+                document.getElementById('musteriModalBaslik').textContent = 'Yeni Müşteri Ekle';
+                openModal('musteriModal');
+            });
+            
+            yeniTedarikciBtn.addEventListener('click', () => {
+                document.getElementById('tedarikciForm').reset();
+                document.getElementById('editTedarikciId').value = '';
+                document.getElementById('tedarikciModalBaslik').textContent = 'Yeni Tedarikçi Ekle';
+                openModal('tedarikciModal');
+            });
+
+            document.querySelectorAll('.close-btn').forEach(btn => {
+                btn.addEventListener('click', () => closeModal(btn.dataset.modal));
+            });
+            
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', e => { if (e.target === modal) closeModal(modal.id); });
+            });
+            
+            switchTab('musteriler');
+
+            window.editMusteri = editMusteri;
+            window.deleteMusteri = deleteMusteri;
+            window.editTedarikci = editTedarikci;
+            window.deleteTedarikci = deleteTedarikci;
+        });
+    </script>
+</body>
+</html>

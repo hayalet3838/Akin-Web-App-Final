@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Siparişe Dayalı Planlama</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --warning-color: #f59e0b;
+            --danger-color: #ef4444; --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; color: white; }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.875rem; }
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-secondary { background-color: #64748b; }
+        .btn-success { background-color: var(--success-color); }
+        .btn:disabled { background-color: #9ca3af; cursor: not-allowed; border-color: #9ca3af; transform: none; }
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0 0 2rem 0; }
+        .content-card { background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); margin-bottom: 2rem; }
+        .content-card h2, .content-card h3 { font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem; }
+        .content-card h3 { font-size: 1.25rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; }
+        .status-yeterli { color: var(--success-color); font-weight: 600; }
+        .status-yetersiz { color: var(--danger-color); font-weight: 600; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-sitemap"></i> Siparişe Dayalı Planlama</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header"><h1>Adım Adım Üretim Planlama</h1></div>
+        <div class="content-card">
+            <h2>1. Adım: Siparişi Seç ve Hammadde Durumunu Analiz Et</h2>
+            <div class="form-group" style="max-width: 600px;">
+                <label for="siparisSec">Planlanacak Satış Siparişleri</label>
+                <select id="siparisSec"></select>
+            </div>
+            <div id="analizSonucAlani" style="display: none; margin-top: 2rem;">
+                <h3>Hammadde İhtiyaç Analizi</h3>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Hammadde</th><th>Gereken</th><th>Mevcut Stok</th><th>Fark</th><th>Durum</th><th>İşlem</th></tr></thead>
+                        <tbody id="analizSonucListesi"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="content-card" id="uretimEmriKarti" style="display: none;">
+            <h2>2. Adım: Üretim Emri Oluştur</h2>
+            <p id="uretimEmriMesaj" style="color: var(--text-light);">Hammadde durumu yukarıda belirtilmiştir. Bu siparişteki tüm ürünler için üretim emirleri oluşturabilirsiniz.</p>
+            <button id="uretimEmriBtn" class="btn btn-success" style="font-size: 1.1rem; padding: 0.8rem 2rem;">
+                <i class="fas fa-cogs"></i> Üretim Emri Ver
+            </button>
+        </div>
+    </div>
+    <script>
+        const API_PREFIX = '/api';
+        let seciliSiparisUrunleri = [];
+
+        async function loadSiparisler() {
+            try {
+                const response = await fetch(`${API_PREFIX}/satis-fisleri`);
+                const siparisler = await response.json();
+                const siparisSelect = document.getElementById('siparisSec');
+                siparisSelect.innerHTML = '<option value="">Analiz için bir sipariş seçiniz...</option>';
+                
+                siparisler.filter(s => s.durum === 'Onaylandı').forEach(s => {
+                    const icerik = s.siparis_icerigi ? `(${s.siparis_icerigi})` : '(İçerik Yok)';
+                    const optionText = `${s.siparis_kodu} - ${icerik}`;
+                    siparisSelect.innerHTML += `<option value="${s.id}">${optionText}</option>`;
+                });
+            } catch (error) { console.error(error.message); }
+        }
+
+        async function getAnaliz(satisId) {
+            const analizAlani = document.getElementById('analizSonucAlani');
+            const uretimEmriKarti = document.getElementById('uretimEmriKarti');
+            const analizListesi = document.getElementById('analizSonucListesi');
+            
+            if (!satisId) {
+                analizAlani.style.display = 'none';
+                uretimEmriKarti.style.display = 'none';
+                return;
+            }
+
+            analizAlani.style.display = 'block';
+            uretimEmriKarti.style.display = 'block';
+            analizListesi.innerHTML = '<tr><td colspan="6" style="text-align:center;">Analiz yapılıyor...</td></tr>';
+            
+            try {
+                 const kalemlerResponse = await fetch(`${API_PREFIX}/satis-fisleri/${satisId}`);
+                 if (!kalemlerResponse.ok) throw new Error('Sipariş kalemleri alınamadı.');
+                 const kalemData = await kalemlerResponse.json();
+                 seciliSiparisUrunleri = kalemData.kalemler;
+
+                const response = await fetch(`${API_PREFIX}/planlama/analiz/${satisId}`);
+                if (!response.ok) throw new Error('Analiz verisi alınamadı.');
+                const data = await response.json();
+                
+                // DÜZELTME: Fonksiyon adı yanlış yazılmıştı, doğrusu 'renderAnalizSonuclari'
+                renderAnalizSonuclari(data.analiz);
+
+            } catch (error) {
+                analizListesi.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red;">Analiz sırasında bir hata oluştu: ${error.message}</td></tr>`;
+            }
+        }
+        
+        function renderAnalizSonuclari(analizListesiData) {
+            const analizListesi = document.getElementById('analizSonucListesi');
+            analizListesi.innerHTML = '';
+            if (analizListesiData.length === 0) {
+                analizListesi.innerHTML = '<tr><td colspan="6" style="text-align:center;">Bu sipariş için hammadde ihtiyacı bulunmuyor veya ürün reçeteleri tanımlanmamış.</td></tr>';
+                return;
+            }
+            let hepsiYeterli = true;
+            analizListesiData.forEach(item => {
+                const durumClass = item.durum === 'Yeterli' ? 'status-yeterli' : 'status-yetersiz';
+                if(item.durum === 'Yetersiz') hepsiYeterli = false;
+                let islemButonu = '-';
+                if (item.durum === 'Yetersiz') {
+                    const eksikMiktar = Math.abs(item.fark);
+                    islemButonu = `<button class="btn btn-sm btn-primary" onclick="createSatinAlmaTalebi(${item.hammadde_id}, ${eksikMiktar}, '${item.birim}')">Talep Oluştur (${eksikMiktar} ${item.birim})</button>`;
+                }
+                analizListesi.innerHTML += `
+                    <tr>
+                        <td><strong>${item.hammadde_adi}</strong></td>
+                        <td>${item.gereken_miktar} ${item.birim}</td>
+                        <td>${item.mevcut_stok} ${item.birim}</td>
+                        <td class="${durumClass}">${item.fark} ${item.birim}</td>
+                        <td><span class="${durumClass}">${item.durum}</span></td>
+                        <td>${islemButonu}</td>
+                    </tr>`;
+            });
+
+            const uretimEmriMesaj = document.getElementById('uretimEmriMesaj');
+            if(!hepsiYeterli){
+                uretimEmriMesaj.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:var(--warning-color);"></i> Hammadde stoğu yetersiz! Yine de üretim emri oluşturabilirsiniz ancak üretim başlamadan önce satın alma yapmanız gerekecektir.`;
+            } else {
+                 uretimEmriMesaj.textContent = `Tüm hammaddeler stokta mevcut. Üretim emrini güvenle oluşturabilirsiniz.`;
+            }
+        }
+        
+        async function createSatinAlmaTalebi(hammaddeId, miktar, birim) {
+            if (!confirm(`${miktar} ${birim} için satın alma talebi oluşturulsun mu?`)) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/satin-alma-talepleri`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ hammadde_id: hammaddeId, miktar: miktar, birim: birim })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+            } catch (error) {
+                alert(`Talep oluşturulurken hata: ${error.message}`);
+            }
+        }
+
+        async function createUretimEmri() {
+            const siparisId = document.getElementById('siparisSec').value;
+            if(!siparisId) return;
+            if (seciliSiparisUrunleri.length === 0) {
+                alert("Siparişe ait ürünler bulunamadı. Üretim emri oluşturulamaz.");
+                return;
+            }
+            if(!confirm(`Seçili siparişteki tüm ürünler için üretim emri oluşturulacak. Onaylıyor musunuz?`)) return;
+            const uretimEmriBtn = document.getElementById('uretimEmriBtn');
+            uretimEmriBtn.disabled = true;
+            uretimEmriBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Oluşturuluyor...';
+            try {
+                // Not: Bu API çağrısı, `getAnaliz` içinde zaten yapılıyor ve `seciliSiparisUrunleri` dolduruluyor.
+                // Tekrar çağırmaya gerek yok ama güvenlik için burada bırakabiliriz.
+                const kalemlerResponse = await fetch(`${API_PREFIX}/satis-fisleri/${siparisId}`);
+                const kalemData = await kalemlerResponse.json();
+                 // API'den gelen yanıtta `urun_id` olduğundan emin olmalıyız. 
+                 // Bunun için `get_satis_fisi_detay` fonksiyonunu düzenlemek gerekebilir.
+                seciliSiparisUrunleri = kalemData.kalemler; 
+                
+                for (const kalem of seciliSiparisUrunleri) {
+                    if (!kalem.urun_id) {
+                        console.error("Kalem içinde 'urun_id' bulunamadı:", kalem);
+                        continue; // Hatalı kalemi atla
+                    }
+                    const is_emri_kodu = `SIP-${siparisId}-URUN-${kalem.urun_id}`;
+                    const uretimData = {
+                        is_emri_kodu: is_emri_kodu,
+                        urun_id: kalem.urun_id,
+                        hedef_miktar: kalem.miktar,
+                    };
+                    const response = await fetch(`${API_PREFIX}/uretim-emirleri`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(uretimData)
+                    });
+                    if (!response.ok) {
+                        const err = await response.json();
+                        throw new Error(`'${is_emri_kodu}' oluşturulamadı: ${err.detail}`);
+                    }
+                }
+                alert("Seçili siparişteki tüm ürünler için üretim emirleri başarıyla oluşturuldu.");
+                window.location.href = '/uretim';
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            } finally {
+                uretimEmriBtn.disabled = false;
+                uretimEmriBtn.innerHTML = '<i class="fas fa-cogs"></i> Üretim Emri Ver';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSiparisler();
+            document.getElementById('siparisSec').addEventListener('change', (e) => getAnaliz(e.target.value));
+            document.getElementById('uretimEmriBtn').addEventListener('click', createUretimEmri);
+            window.createSatinAlmaTalebi = createSatinAlmaTalebi;
+        });
+    </script>
+</body>
+</html>

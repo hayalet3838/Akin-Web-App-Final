@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeni Alış Faturası - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --danger-color: #ef4444;
+            --border-color: #e2e8f0; --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: white; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: none; cursor: pointer; }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.875rem; }
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+        .btn-success { background-color: var(--success-color); }
+        .btn-success:hover { background-color: #16a34a; }
+        .btn-danger { background-color: var(--danger-color); }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        .content-card { background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; box-shadow: var(--card-shadow); margin-bottom: 2rem; border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); }
+        .content-card h2 { font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select { width:100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem; }
+        .items-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+        .items-table th, .items-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); text-align: left; vertical-align: middle; }
+        .items-table thead { background-color: #f8fafc; }
+        .items-table th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+        .items-table input { width:100%; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.5rem; font-size: 0.95rem; }
+        .actions-and-summary { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 2rem; gap: 2rem; flex-wrap: wrap; }
+        .summary-box { width: 350px; border: 1px solid var(--border-color); border-radius: 0.75rem; overflow: hidden; font-size: 1rem; box-shadow: var(--card-shadow); flex-shrink: 0; margin-left: auto; }
+        .summary-row { display: flex; justify-content: space-between; padding: 1rem 1.25rem; }
+        .summary-row:not(:last-child) { border-bottom: 1px solid var(--border-color); }
+        .summary-row.grand-total { background-color: var(--text-dark); color: white; font-size: 1.2rem; font-weight: 700; }
+        .summary-row.grand-total span, .summary-row.grand-total strong { color: white; }
+        .page-actions { text-align: right; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-file-invoice"></i> Yeni Alış Faturası</a>
+        <a href="/gelen-faturalar" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Faturalara Dön</a>
+    </nav>
+    <form id="gelenFaturaForm">
+        <div class="container">
+            <div class="page-header">
+                <h1>Yeni Fatura Oluştur</h1>
+                <div>
+                    <input type="file" id="xmlUploader" accept=".xml" style="display: none;">
+                    <button type="button" id="xmlUploaderBtn" class="btn btn-success"><i class="fas fa-file-code"></i> XML'den Oku</button>
+                </div>
+            </div>
+            <div class="content-card">
+                <h2>Fatura Ana Bilgileri</h2>
+                <div class="form-grid">
+                    <div class="form-group"><label for="tedarikci">Tedarikçi</label><select id="tedarikci" required></select></div>
+                    <div class="form-group"><label for="fatura_numarasi">Fatura Numarası</label><input type="text" id="fatura_numarasi" required></div>
+                    <div class="form-group"><label for="fatura_tarihi">Fatura Tarihi</label><input type="date" id="fatura_tarihi" required></div>
+                    <div class="form-group"><label for="vade_tarihi">Vade Tarihi</label><input type="date" id="vade_tarihi"></div>
+                    <div class="form-group" style="grid-column: span 2;"><label for="aciklama">Açıklama</label><input type="text" id="aciklama"></div>
+                </div>
+            </div>
+            <div class="content-card">
+                <h2>Fatura Kalemleri</h2>
+                <div style="overflow-x:auto;">
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40%;">Açıklama</th><th>Miktar</th><th>Birim</th><th>Birim Fiyat</th>
+                                <th>KDV (%)</th><th>Toplam Fiyat</th><th style="width: 5%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="faturaKalemleriTbody"></tbody>
+                    </table>
+                </div>
+                <div class="actions-and-summary">
+                    <button type="button" class="btn btn-success" id="addRowBtn"><i class="fas fa-plus"></i> Yeni Kalem Ekle</button>
+                    <div class="summary-box">
+                        <div class="summary-row"><span>Ara Toplam</span><strong id="araToplam">0.00 ₺</strong></div>
+                        <div class="summary-row"><span>Toplam KDV</span><strong id="toplamKdv">0.00 ₺</strong></div>
+                        <div class="summary-row grand-total"><span>Genel Toplam</span><strong id="genelToplam">0.00 ₺</strong></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-actions">
+                <button type="submit" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.8rem 2.5rem;"><i class="fas fa-save"></i> Faturayı Kaydet</button>
+            </div>
+        </div>
+    </form>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tbody = document.getElementById('faturaKalemleriTbody');
+        const addRowBtn = document.getElementById('addRowBtn');
+        const form = document.getElementById('gelenFaturaForm');
+        let tedarikcilerList = [];
+
+        async function loadTedarikciler() {
+            try {
+                const response = await fetch('/api/tedarikciler');
+                if (!response.ok) throw new Error('Tedarikçiler yüklenemedi');
+                tedarikcilerList = await response.json();
+                const tedarikciSelect = document.getElementById('tedarikci');
+                tedarikciSelect.innerHTML = '<option value="">Tedarikçi Seçiniz...</option>';
+                tedarikcilerList.forEach(t => {
+                    tedarikciSelect.innerHTML += `<option value="${t.id}" data-vkn="${t.vergi_no}">${t.firma_adi}</option>`;
+                });
+            } catch (error) { console.error(error); }
+        }
+
+        function addRow(item = {}) {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td><input type="text" class="form-control kalem-aciklama" value="${item.aciklama || ''}" required></td>
+                <td><input type="number" class="form-control kalem-miktar" value="${item.miktar || 1}" step="any" required></td>
+                <td><input type="text" class="form-control kalem-birim" value="${item.birim || 'Adet'}"></td>
+                <td><input type="number" class="form-control kalem-birim-fiyat" value="${item.birim_fiyat || 0}" step="any" required></td>
+                <td><input type="number" class="form-control kalem-kdv" value="${item.kdv_orani || 20}" step="any" required></td>
+                <td><input type="text" class="form-control kalem-toplam" readonly style="background-color: #f8fafc; text-align: right;"></td>
+                <td><button type="button" class="btn btn-sm btn-danger" onclick="this.closest('tr').remove(); updateTotals();"><i class="fas fa-trash"></i></button></td>
+            `;
+        }
+
+        function updateTotals() {
+            let araToplam = 0;
+            let toplamKdv = 0;
+            tbody.querySelectorAll('tr').forEach(row => {
+                const miktar = parseFloat(row.querySelector('.kalem-miktar').value) || 0;
+                const birimFiyat = parseFloat(row.querySelector('.kalem-birim-fiyat').value) || 0;
+                const kdvOrani = parseFloat(row.querySelector('.kalem-kdv').value) || 0;
+                const satirToplam = miktar * birimFiyat;
+                const satirKdv = satirToplam * (kdvOrani / 100);
+                araToplam += satirToplam;
+                toplamKdv += satirKdv;
+                row.querySelector('.kalem-toplam').value = (satirToplam + satirKdv).toFixed(2) + ' ₺';
+            });
+            const formatCurrency = (val) => val.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+            document.getElementById('araToplam').textContent = formatCurrency(araToplam);
+            document.getElementById('toplamKdv').textContent = formatCurrency(toplamKdv);
+            document.getElementById('genelToplam').textContent = formatCurrency(araToplam + toplamKdv);
+        }
+
+        const xmlUploaderBtn = document.getElementById('xmlUploaderBtn');
+        const xmlUploader = document.getElementById('xmlUploader');
+        xmlUploaderBtn.addEventListener('click', () => xmlUploader.click());
+        xmlUploader.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('xml_file', file);
+            xmlUploaderBtn.disabled = true;
+            xmlUploaderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Okunuyor...';
+            try {
+                const response = await fetch('/api/fatura-yukle/xml', { method: 'POST', body: formData });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail);
+                const fatura = data.fatura;
+                const kalemler = data.kalemler;
+                document.getElementById('fatura_numarasi').value = fatura.fatura_numarasi;
+                document.getElementById('fatura_tarihi').value = fatura.fatura_tarihi;
+                const tedarikciSelect = document.getElementById('tedarikci');
+                const optionToSelect = Array.from(tedarikciSelect.options).find(opt => opt.dataset.vkn === fatura.tedarikci_vkn);
+                if (optionToSelect) {
+                    tedarikciSelect.value = optionToSelect.value;
+                } else {
+                    alert(`Faturadaki VKN (${fatura.tedarikci_vkn}) ile eşleşen bir tedarikçi bulunamadı. Lütfen manuel seçin.`);
+                }
+                tbody.innerHTML = '';
+                kalemler.forEach(kalem => addRow(kalem));
+                updateTotals();
+            } catch (error) {
+                alert(`XML Okuma Hatası: ${error.message}`);
+            } finally {
+                xmlUploaderBtn.disabled = false;
+                xmlUploaderBtn.innerHTML = '<i class="fas fa-file-code"></i> XML\'den Oku';
+                event.target.value = null;
+            }
+        });
+
+        form.addEventListener('submit', async function(e) { 
+            e.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...';
+            const faturaData = {
+                tedarikci_id: parseInt(document.getElementById('tedarikci').value),
+                fatura_numarasi: document.getElementById('fatura_numarasi').value,
+                fatura_tarihi: document.getElementById('fatura_tarihi').value,
+                vade_tarihi: document.getElementById('vade_tarihi').value || null,
+                aciklama: document.getElementById('aciklama').value,
+                toplam_tutar: parseFloat(document.getElementById('araToplam').textContent.replace(/[^\d,-]/g, '').replace(',', '.')),
+                kdv_tutari: parseFloat(document.getElementById('toplamKdv').textContent.replace(/[^\d,-]/g, '').replace(',', '.')),
+                genel_toplam: parseFloat(document.getElementById('genelToplam').textContent.replace(/[^\d,-]/g, '').replace(',', '.'))
+            };
+            const kalemlerData = Array.from(tbody.querySelectorAll('tr')).map(row => {
+                const miktar = parseFloat(row.querySelector('.kalem-miktar').value) || 0;
+                const birimFiyat = parseFloat(row.querySelector('.kalem-birim-fiyat').value) || 0;
+                const kdvOrani = parseFloat(row.querySelector('.kalem-kdv').value) || 0;
+                return {
+                    aciklama: row.querySelector('.kalem-aciklama').value,
+                    miktar: miktar,
+                    birim: row.querySelector('.kalem-birim').value,
+                    birim_fiyat: birimFiyat,
+                    kdv_orani: kdvOrani,
+                    toplam_fiyat: miktar * birimFiyat * (1 + kdvOrani / 100)
+                };
+            });
+            if (!faturaData.tedarikci_id) {
+                alert("Lütfen bir tedarikçi seçin.");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Faturayı Kaydet';
+                return;
+            }
+            try {
+                const response = await fetch('/api/gelen-faturalar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fatura: faturaData, kalemler: kalemlerData })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                window.location.href = '/gelen-faturalar';
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Faturayı Kaydet';
+            }
+        });
+
+        form.addEventListener('keydown', function(e) {
+            if (e.key !== 'Enter' || e.target.tagName === 'TEXTAREA') return;
+            e.preventDefault();
+            const focusable = Array.from(form.querySelectorAll('input:not([readonly]), select, button[type="submit"]'));
+            const index = focusable.indexOf(e.target);
+            if (index > -1 && index < focusable.length - 1) {
+                focusable[index + 1].focus();
+            }
+        });
+
+        loadTedarikciler();
+        addRow();
+        tbody.addEventListener('input', updateTotals);
+        addRowBtn.addEventListener('click', () => addRow());
+        document.getElementById('fatura_tarihi').valueAsDate = new Date();
+    });
+    </script>
+</body>
+</html>

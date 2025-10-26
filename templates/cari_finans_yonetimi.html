@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Cari Finans Yönetimi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --success-color: #22c55e; --border-color: #e2e8f0; 
+            --card-bg: #fff; --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --danger-color: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: var(--card-shadow); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: white; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; border: none; cursor: pointer; }
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-success { background-color: var(--success-color); }
+        .btn-secondary { background-color: #e2e8f0; color: var(--text-dark); }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; margin: 0; }
+        .tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: -1px; }
+        .tab-link { padding: 1rem 1.5rem; border: none; background: none; cursor: pointer; font-size: 1.1rem; font-weight: 600; color: var(--text-light); border-bottom: 3px solid transparent; }
+        .tab-link.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .content-card { background-color: var(--card-bg); padding: 2rem; border-radius: 0.75rem; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); margin-bottom: 2rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: #f8fafc; font-weight: 600; }
+        .text-right { text-align: right; }
+        .action-buttons button { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--danger-color); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-content { background-color: var(--card-bg); padding: 2rem; border-radius: 0.75rem; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { margin: 0; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 1rem; }
+        .form-group label { font-weight: 500; margin-bottom: 0.5rem; }
+        .form-group input, .form-group select, .form-group textarea { padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; }
+        .btn-group { display: flex; gap: 1rem; margin-top: 1.5rem; justify-content:flex-end; }
+        .bakiye-pozitif { color: var(--danger-color); font-weight: 600; }
+        .bakiye-negatif { color: var(--success-color); font-weight: 600; }
+        .clickable-row { cursor: pointer; }
+        .clickable-row:hover { background-color: #f9fafb; }
+        .selected-row { background-color: #eff6ff; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-landmark"></i> Cari Finans Yönetimi</a>
+        <a href="/" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Cari Hesaplar</h1>
+            <div>
+                <button id="yeniTahsilatBtn" class="btn btn-success"><i class="fas fa-plus"></i> Yeni Tahsilat Ekle</button>
+                <button id="yeniOdemeBtn" class="btn btn-success" style="display: none;"><i class="fas fa-plus"></i> Yeni Ödeme Ekle</button>
+            </div>
+        </div>
+        <div class="tabs">
+            <button class="tab-link active" data-tab="musteri-finans">Müşteri Finans</button>
+            <button class="tab-link" data-tab="tedarikci-finans">Tedarikçi Finans</button>
+        </div>
+        <div id="musteri-finans" class="tab-content active">
+            <div class="content-card" style="border-radius: 0 0.75rem 0.75rem 0.75rem; border-top:none;">
+                <h2>Müşteri Cari Hesapları (Özet için bir müşteriye tıklayın)</h2>
+                <table id="musteriBakiyeTablosu">
+                    <thead><tr><th>CARİ ADI</th><th class="text-right">BAKİYE</th><th class="text-right">İŞLEMLER</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="tedarikci-finans" class="tab-content">
+            <div class="content-card" style="border-radius: 0 0.75rem 0.75rem 0.75rem; border-top:none;">
+                 <h2>Tedarikçi Cari Hesapları (Özet için bir tedarikçiye tıklayın)</h2>
+                <table id="tedarikciBakiyeTablosu">
+                    <thead><tr><th>CARİ ADI</th><th class="text-right">BAKİYE</th><th class="text-right">İŞLEMLER</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="content-card" id="hesapOzetiKarti" style="display:none;">
+            <h2 id="hesapOzetiBaslik">Hesap Özeti</h2>
+            <table id="hesapOzetiTablosu">
+                <thead><tr><th>Tarih</th><th>Açıklama</th><th class="text-right">İşlem Tutarı</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="tahsilatModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Yeni Tahsilat Ekle (Müşteriden)</h2>
+                <button class="close-btn" data-modal="tahsilatModal">&times;</button>
+            </div>
+            <form id="musteriFinansForm">
+                <div class="form-group"><label for="musteriSecim">Müşteri Seçin</label><select id="musteriSecim" required></select></div>
+                <div class="form-group"><label for="musteriTutar">Tutar (TL)</label><input type="number" id="musteriTutar" step="0.01" required></div>
+                <div class="form-group"><label for="musteriAciklama">Açıklama</label><textarea id="musteriAciklama" rows="3"></textarea></div>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Tahsilat Kaydet</button>
+                    <button type="button" class="btn btn-secondary close-btn" data-modal="tahsilatModal">İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="odemeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Yeni Ödeme Ekle (Tedarikçiye)</h2>
+                <button class="close-btn" data-modal="odemeModal">&times;</button>
+            </div>
+            <form id="tedarikciFinansForm">
+                <div class="form-group"><label for="tedarikciSecim">Tedarikçi Seçin</label><select id="tedarikciSecim" required></select></div>
+                <div class="form-group"><label for="tedarikciTutar">Tutar (TL)</label><input type="number" id="tedarikciTutar" step="0.01" required></div>
+                <div class="form-group"><label for="tedarikciAciklama">Açıklama</label><textarea id="tedarikciAciklama" rows="3"></textarea></div>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Ödeme Kaydet</button>
+                    <button type="button" class="btn btn-secondary close-btn" data-modal="odemeModal">İptal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_PREFIX = '/api';
+
+        async function loadAllData() {
+            try {
+                const [musteriRes, tedarikciRes] = await Promise.all([
+                    fetch(`${API_PREFIX}/musteri-bakiyeleri`),
+                    fetch(`${API_PREFIX}/tedarikci-bakiyeleri`)
+                ]);
+                const musteriler = await musteriRes.json();
+                const tedarikciler = await tedarikciRes.json();
+                renderMusteriBakiyeleri(musteriler);
+                renderTedarikciBakiyeleri(tedarikciler);
+                populateMusteriDropdown(musteriler);
+                populateTedarikciDropdown(tedarikciler);
+            } catch (error) {
+                console.error("Veri yüklenirken hata oluştu:", error);
+                alert("Sayfa verileri yüklenemedi.");
+            }
+        }
+        
+        function populateMusteriDropdown(musteriler) {
+            const select = document.getElementById('musteriSecim');
+            select.innerHTML = '<option value="">Müşteri Seçiniz...</option>';
+            musteriler.forEach(m => {
+                select.innerHTML += `<option value="${m.id}">${m.ad}</option>`;
+            });
+        }
+        
+        function populateTedarikciDropdown(tedarikciler) {
+            const select = document.getElementById('tedarikciSecim');
+            select.innerHTML = '<option value="">Tedarikçi Seçiniz...</option>';
+            tedarikciler.forEach(t => {
+                select.innerHTML += `<option value="${t.id}">${t.firma_adi}</option>`;
+            });
+        }
+
+        function renderMusteriBakiyeleri(bakiyeler) {
+            const tbody = document.getElementById('musteriBakiyeTablosu').querySelector('tbody');
+            tbody.innerHTML = '';
+            if (bakiyeler.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 2rem;">Müşteri kaydı bulunmuyor.</td></tr>`;
+                return;
+            }
+            bakiyeler.forEach(m => {
+                const bakiye = parseFloat(m.bakiye);
+                const bakiyeClass = bakiye > 0 ? 'bakiye-pozitif' : (bakiye < 0 ? 'bakiye-negatif' : '');
+                const bakiyeText = bakiye.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="clickable-row" data-id="${m.id}" data-name="${m.ad}" data-type="musteri"><strong>${m.ad}</strong></td>
+                    <td class="clickable-row text-right ${bakiyeClass}" data-id="${m.id}" data-name="${m.ad}" data-type="musteri">${bakiyeText}</td>
+                    <td class="action-buttons text-right">
+                        <button onclick="deleteCari('musteri', ${m.id}, event)"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function renderTedarikciBakiyeleri(bakiyeler) {
+            const tbody = document.getElementById('tedarikciBakiyeTablosu').querySelector('tbody');
+            tbody.innerHTML = '';
+            if (bakiyeler.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding: 2rem;">Tedarikçi kaydı bulunmuyor.</td></tr>`;
+                return;
+            }
+            bakiyeler.forEach(t => {
+                const bakiye = parseFloat(t.bakiye);
+                const bakiyeClass = bakiye > 0 ? 'bakiye-pozitif' : (bakiye < 0 ? 'bakiye-negatif' : '');
+                const bakiyeText = bakiye.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="clickable-row" data-id="${t.id}" data-name="${t.firma_adi}" data-type="tedarikci"><strong>${t.firma_adi}</strong></td>
+                    <td class="clickable-row text-right ${bakiyeClass}" data-id="${t.id}" data-name="${t.firma_adi}" data-type="tedarikci">${bakiyeText}</td>
+                    <td class="action-buttons text-right">
+                        <button onclick="deleteCari('tedarikci', ${t.id}, event)"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        async function deleteCari(cariTipi, cariId, event) {
+            event.stopPropagation(); // Satırın tıklanma olayını engelle
+            const endpoint = cariTipi === 'musteri' ? 'musteriler' : 'tedarikciler';
+            if (!confirm(`Bu ${cariTipi} kaydını silmek istediğinizden emin misiniz?`)) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/${endpoint}/${cariId}`, { method: 'DELETE' });
+                if (!response.ok) { const err = await response.json(); throw new Error(err.detail); }
+                alert('Kayıt başarıyla silindi.');
+                await loadAllData();
+                document.getElementById('hesapOzetiKarti').style.display = 'none';
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+
+        async function getHesapOzeti(cariTipi, cariId, cariName) {
+            const kart = document.getElementById('hesapOzetiKarti');
+            const baslik = document.getElementById('hesapOzetiBaslik');
+            const tbody = document.getElementById('hesapOzetiTablosu').querySelector('tbody');
+            baslik.textContent = `${cariName} - Hesap Özeti`;
+            kart.style.display = 'block';
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Yükleniyor...</td></tr>';
+            try {
+                const response = await fetch(`${API_PREFIX}/finansal-islemler/${cariTipi}/${cariId}`);
+                if (!response.ok) throw new Error('Hesap özeti alınamadı');
+                const hareketler = await response.json();
+                tbody.innerHTML = '';
+                if(hareketler.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Finansal hareket bulunmuyor.</td></tr>';
+                    return;
+                }
+                hareketler.forEach(h => {
+                     tbody.innerHTML += `
+                        <tr>
+                            <td>${new Date(h.islem_tarihi).toLocaleDateString('tr-TR')}</td>
+                            <td>${h.aciklama}</td>
+                            <td class="text-right">${(h.islem_tipi === 'gelir' ? '+' : '-') + parseFloat(h.miktar).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:red;">${error.message}</td></tr>`;
+            }
+        }
+        
+        async function createFinansalIslem(event, islemTipi, cariTipi) {
+            event.preventDefault();
+            const form = event.target;
+            const cariData = form.querySelector('select').value;
+            const tutar = form.querySelector('input[type="number"]').value;
+            const aciklama = form.querySelector('textarea').value;
+            if (!cariData || !tutar) { alert("Lütfen cari ve tutar alanlarını doldurun."); return; }
+            const [tip, cariId] = cariData.split('-');
+            const data = { islem_tarihi: new Date().toISOString().split('T')[0], islem_tipi: islemTipi, miktar: parseFloat(tutar), aciklama: aciklama, ilgili_cari_id: `${cariTipi}-${cariId}` };
+            try {
+                const response = await fetch(`${API_PREFIX}/finansal-islemler`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                closeModal(form.closest('.modal-overlay').id);
+                form.reset();
+                await loadAllData();
+                document.getElementById('hesapOzetiKarti').style.display = 'none';
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+        
+        function openModal(modalId) { document.getElementById(modalId).style.display = 'flex'; }
+        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllData();
+            document.getElementById('musteriFinansForm').addEventListener('submit', (e) => createFinansalIslem(e, 'gider', 'musteri'));
+            document.getElementById('tedarikciFinansForm').addEventListener('submit', (e) => createFinansalIslem(e, 'gelir', 'tedarikci'));
+            const tabs = document.querySelectorAll('.tab-link');
+            const yeniTahsilatBtn = document.getElementById('yeniTahsilatBtn');
+            const yeniOdemeBtn = document.getElementById('yeniOdemeBtn');
+            
+            function switchTab(tabId) {
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tabs.forEach(t => t.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+                document.querySelector(`.tab-link[data-tab="${tabId}"]`).classList.add('active');
+                yeniTahsilatBtn.style.display = tabId === 'musteri-finans' ? 'inline-flex' : 'none';
+                yeniOdemeBtn.style.display = tabId === 'tedarikci-finans' ? 'inline-flex' : 'none';
+                document.getElementById('hesapOzetiKarti').style.display = 'none';
+            }
+            tabs.forEach(btn => { btn.addEventListener('click', () => switchTab(btn.dataset.tab)); });
+            
+            function handleRowClick(e) {
+                const row = e.target.closest('.clickable-row');
+                if(!row) return;
+                document.querySelectorAll('.selected-row').forEach(r => r.classList.remove('selected-row'));
+                row.closest('tr').classList.add('selected-row');
+                getHesapOzeti(row.dataset.type, row.dataset.id, row.dataset.name);
+            }
+            document.getElementById('musteriBakiyeTablosu').addEventListener('click', handleRowClick);
+            document.getElementById('tedarikciBakiyeTablosu').addEventListener('click', handleRowClick);
+            yeniTahsilatBtn.addEventListener('click', () => openModal('tahsilatModal'));
+            yeniOdemeBtn.addEventListener('click', () => openModal('odemeModal'));
+            document.querySelectorAll('.close-btn').forEach(btn => { btn.addEventListener('click', () => closeModal(btn.dataset.modal)); });
+            switchTab('musteri-finans');
+        });
+    </script>
+</body>
+</html>

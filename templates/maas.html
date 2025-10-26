@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maaş Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --success-color: #22c55e; 
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); color: var(--text-dark); margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); padding: 0 2rem; height: 70px; 
+            box-shadow: var(--card-shadow); display: flex; align-items: center; 
+            justify-content: space-between; position: sticky; top: 0; z-index: 1000; 
+        }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { 
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; 
+            text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; 
+            font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color);
+            background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; 
+        }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        
+        .content-card { 
+            background-color: var(--card-bg); border-radius: 0.75rem; padding: 2rem; 
+            box-shadow: var(--card-shadow); border: 1px solid var(--border-color); 
+            border-top: 4px solid var(--primary-color); margin-bottom: 2rem;
+        }
+        .content-card h2 {
+            font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select { 
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); 
+            border-radius: 0.5rem; font-size: 1rem; 
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        .action-buttons button { background: none; border: none; font-size: 1.1rem; cursor: pointer; transition: opacity 0.2s; }
+        .action-buttons button:hover { opacity: 0.7; }
+        .action-buttons .edit-btn { color: var(--warning-color); }
+        .action-buttons .delete-btn { color: var(--danger-color); }
+        
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        
+        .password-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .password-box { background: var(--card-bg); padding: 3rem; border-radius: 1rem; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); text-align: center; width: 90%; max-width: 450px; transform: scale(0.95); animation: popIn 0.3s 0.1s ease-out forwards; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .password-box .icon { font-size: 4rem; color: var(--primary-color); margin-bottom: 1.5rem; }
+        .password-box h2 { font-size: 2rem; margin-top: 0; margin-bottom: 0.75rem; }
+        .password-box p { color: var(--text-light); margin-bottom: 2rem; line-height: 1.6; }
+        .password-box input { width: 100%; text-align: center; letter-spacing: 2px; padding: 0.8rem; font-size: 1.1rem; border: 2px solid var(--border-color); border-radius: 0.5rem; margin-bottom: 1.5rem; transition: border-color 0.2s, box-shadow 0.2s; }
+        .password-box input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 4px rgb(59 130 246 / 0.2); }
+
+        @media (max-width: 992px) { .content-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .content-card { padding: 1.5rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-box">
+            <div class="icon"><i class="fas fa-shield-alt"></i></div>
+            <h2>Güvenli Alan</h2>
+            <p>Maaş yönetimi bölümüne erişim için lütfen yönetici şifresini giriniz.</p>
+            <input type="password" id="passwordInput" placeholder="••••••••">
+            <button class="btn btn-primary" style="width: 100%; padding: 0.8rem;" onclick="checkPassword()">Giriş Yap</button>
+        </div>
+    </div>
+
+    <div id="appContent" style="display:none;">
+        <nav class="top-nav">
+            <a href="/" class="logo"><i class="fas fa-hand-holding-usd"></i> Maaş Yönetimi</a>
+            <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+        </nav>
+        <div class="container">
+            <div class="page-header">
+                <h1>Maaş ve Bordro İşlemleri</h1>
+            </div>
+            
+            <div class="content-card">
+                <h2>Personel Maaş Bilgileri</h2>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>Ad Soyad</th><th>Pozisyon</th><th>Net Maaş</th><th>İşlemler</th></tr></thead>
+                        <tbody id="personelMaasListesi"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="content-card" style="margin-bottom: 0;">
+                    <h2>Yeni Bordro Oluştur</h2>
+                    <form id="bordroForm">
+                        <div class="form-group">
+                            <label for="personelSec">Personel</label>
+                            <select id="personelSec" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="donemSec">Dönem (Yıl-Ay)</label>
+                            <input type="month" id="donemSec" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fas fa-plus"></i> Bordro Oluştur</button>
+                    </form>
+                </div>
+                <div class="content-card" style="margin-bottom: 0;">
+                    <h2>Geçmiş Bordrolar</h2>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead><tr><th>Personel</th><th>Dönem</th><th>Net Maaş</th><th>İşlemler</th></tr></thead>
+                            <tbody id="bordroListesi"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_PREFIX = '/api';
+
+        async function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput').value;
+            try {
+                const ayarlarResponse = await fetch(`${API_PREFIX}/sistem-ayarlari`);
+                const ayarlar = await ayarlarResponse.json();
+                const maasSifresiAyar = ayarlar.find(ayar => ayar.ayar_anahtari === 'maas_sifresi');
+                
+                if (maasSifresiAyar && passwordInput === maasSifresiAyar.ayar_degeri) {
+                    document.getElementById('passwordOverlay').style.display = 'none';
+                    document.getElementById('appContent').style.display = 'block';
+                    loadData();
+                } else {
+                    alert("Yanlış şifre! Lütfen tekrar deneyin.");
+                }
+            } catch (error) {
+                console.error("Şifre kontrolü sırasında bir hata oluştu:", error);
+                alert("Şifre kontrolü sırasında bir hata oluştu.");
+            }
+        }
+        
+        document.getElementById('passwordInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                checkPassword();
+            }
+        });
+
+        async function loadData() {
+            loadPersonel();
+            loadBordrolar();
+            const now = new Date();
+            document.getElementById('donemSec').value = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+        }
+
+        async function loadPersonel() {
+            try {
+                const response = await fetch(`${API_PREFIX}/personel`);
+                const personeller = await response.json();
+                const tbody = document.getElementById('personelMaasListesi');
+                const select = document.getElementById('personelSec');
+                tbody.innerHTML = '';
+                select.innerHTML = '<option value="">Personel Seçiniz...</option>';
+                if (personeller.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Kayıtlı personel bulunmamaktadır.</td></tr>';
+                    return;
+                }
+                personeller.forEach(p => {
+                    const maas = p.net_maas ? parseFloat(p.net_maas).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }) : 'Girilmedi';
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${p.ad_soyad}</td>
+                            <td>${p.pozisyon || '-'}</td>
+                            <td>${maas}</td>
+                            <td class="action-buttons">
+                                <button class="edit-btn" title="Maaşı Düzenle" onclick="editMaas(${p.id}, '${p.ad_soyad}')"><i class="fas fa-edit"></i></button>
+                            </td>
+                        </tr>`;
+                    select.innerHTML += `<option value="${p.id}">${p.ad_soyad}</option>`;
+                });
+            } catch (error) { console.error('Personel bilgileri yüklenirken hata:', error); }
+        }
+
+        async function loadBordrolar() {
+            try {
+                const response = await fetch(`${API_PREFIX}/maas-bordrolari`);
+                const bordrolar = await response.json();
+                const tbody = document.getElementById('bordroListesi');
+                tbody.innerHTML = '';
+                if (bordrolar.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Kayıtlı bordro bulunmamaktadır.</td></tr>';
+                    return;
+                }
+                bordrolar.forEach(b => {
+                    const netMaas = parseFloat(b.net_maas).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${b.ad_soyad}</td>
+                            <td>${b.odeme_tarihi}</td>
+                            <td>${netMaas}</td>
+                            <td class="action-buttons">
+                                <button class="delete-btn" title="Bordroyu Sil" onclick="deleteBordro(${b.id})"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+            } catch (error) { console.error('Bordrolar yüklenirken hata:', error); }
+        }
+
+        function editMaas(personelId, adSoyad) {
+            const maas = prompt(`Lütfen ${adSoyad} için yeni net maaşı girin (örn: 25000):`);
+            if (maas && !isNaN(parseFloat(maas))) {
+                fetch(`${API_PREFIX}/personel/${personelId}/maas`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ net_maas: parseFloat(maas) })
+                }).then(async response => {
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert(result.message);
+                        loadPersonel();
+                    } else { alert(`Hata: ${result.detail}`); }
+                });
+            } else if (maas !== null) {
+                alert("Lütfen geçerli bir sayı girin.");
+            }
+        }
+
+        async function createBordro(event) {
+            event.preventDefault();
+            const data = {
+                personel_id: document.getElementById('personelSec').value,
+                donem: document.getElementById('donemSec').value
+            };
+            if (!data.personel_id) {
+                alert("Lütfen bir personel seçin.");
+                return;
+            }
+            try {
+                const response = await fetch(`${API_PREFIX}/maas-bordrolari`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                loadBordrolar();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+
+        async function deleteBordro(bordroId) {
+            if (!confirm("Bu bordroyu silmek istediğinizden emin misiniz?")) return;
+             try {
+                const response = await fetch(`${API_PREFIX}/maas-bordrolari/${bordroId}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                loadBordrolar();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+
+        window.editMaas = editMaas;
+        window.deleteBordro = deleteBordro;
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raporlama - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --success-color: #22c55e; 
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-dark); 
+            margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); padding: 0 2rem; height: 70px; 
+            box-shadow: var(--card-shadow); display: flex; align-items: center; 
+            justify-content: space-between; position: sticky; top: 0; z-index: 1000; 
+        }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { 
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; 
+            text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; 
+            font-weight: 600; transition: all 0.2s; border: 1px solid var(--border-color);
+            background-color: var(--card-bg); color: var(--text-dark); cursor: pointer; 
+        }
+        .btn:hover { background-color: #f8fafc; transform: translateY(-2px); }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; transform: translateY(-2px); }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0; }
+        
+        .content-card { 
+            background-color: var(--card-bg); 
+            border-radius: 0.75rem; 
+            padding: 2rem; 
+            box-shadow: var(--card-shadow); 
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+        }
+        .content-card h2 {
+            font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem;
+        }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; white-space: nowrap; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .content-card { padding: 1.5rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-chart-line"></i> Raporlama</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Raporlar</h1>
+        </div>
+        <div class="content-card">
+            <h2>Üretim Emirleri Raporu</h2>
+            <div style="overflow-x: auto;">
+                <table id="uretimRaporuTablosu">
+                    <thead>
+                        <tr>
+                            <th>İş Emri Kodu</th>
+                            <th>Ürün Adı</th>
+                            <th>Hedef Miktar</th>
+                            <th>Üretilen</th>
+                            <th>Durum</th>
+                            <th>Başlama Tarihi</th>
+                            <th>Bitiş Tarihi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API_PREFIX = '/api';
+
+        async function loadUretimRaporu() {
+            try {
+                const response = await fetch(`${API_PREFIX}/raporlar/uretim-ozeti`);
+                if (!response.ok) {
+                    throw new Error('Rapor verisi yüklenemedi.');
+                }
+                const raporData = await response.json();
+                renderRapor(raporData);
+            } catch (error) {
+                console.error('Rapor yüklenirken hata:', error);
+                const tbody = document.getElementById('uretimRaporuTablosu').querySelector('tbody');
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--danger-color); padding: 2rem;">Rapor yüklenirken bir sorun oluştu.</td></tr>';
+            }
+        }
+
+        function renderRapor(data) {
+            const tbody = document.getElementById('uretimRaporuTablosu').querySelector('tbody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">Raporlanacak üretim emri bulunmamaktadır.</td></tr>';
+                return;
+            }
+
+            data.forEach(emir => {
+                const row = `
+                    <tr>
+                        <td><strong>${emir.is_emri_kodu}</strong></td>
+                        <td>${emir.urun_adi || 'Bilinmiyor'}</td>
+                        <td>${emir.hedef_miktar}</td>
+                        <td>${emir.uretilen_miktar || 0}</td>
+                        <td>${emir.durum}</td>
+                        <td>${emir.baslama_tarihi || '-'}</td>
+                        <td>${emir.bitis_tarihi || '-'}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadUretimRaporu);
+    </script>
+</body>
+</html>

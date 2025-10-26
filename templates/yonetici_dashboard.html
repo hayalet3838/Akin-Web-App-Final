@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetici Özet Ekranı - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --success-color: #22c55e; 
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #0ea5e9;
+            --purple-color: #6366f1;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-dark); 
+            margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); padding: 0 2rem; height: 70px; 
+            box-shadow: var(--card-shadow); display: flex; align-items: center; 
+            justify-content: space-between; position: sticky; top: 0; z-index: 1000; 
+        }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn-secondary { 
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; 
+            padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; 
+            border: 1px solid var(--border-color); background-color: #64748b; color: white; border-color: #64748b; 
+        }
+        .btn-secondary:hover { background-color: #475569; }
+
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; }
+        .page-header p { font-size: 1.1rem; color: var(--text-light); margin-top: 0.5rem; }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .widget-card {
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        .widget-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .widget-header .info { flex: 1; }
+        .widget-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+        .widget-icon {
+            font-size: 1.5rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 1rem;
+        }
+        
+        .widget-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .widget-footer {
+            margin-top: auto;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .icon-ciro { background-color: var(--success-color); }
+        .icon-gider { background-color: var(--danger-color); }
+        .icon-bakiye { background-color: var(--primary-color); }
+        .icon-uretim { background-color: var(--warning-color); }
+        .icon-siparis { background-color: var(--info-color); }
+        .icon-musteri { background-color: var(--purple-color); }
+
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-chart-pie"></i> Yönetici Paneli</a>
+        <a href="/" class="btn-secondary"><i class="fas fa-arrow-left"></i> Ana Sisteme Dön</a>
+    </nav>
+    <div class="container">
+        <header class="page-header">
+            <h1>Yönetici Özet Ekranı</h1>
+            <p>Fabrikanın genel durumuna bir bakışta hakim olun.</p>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="info">
+                        <span class="widget-title">Bu Ayın Cirosu</span>
+                        <div class="widget-value" id="val-ciro">Yükleniyor...</div>
+                    </div>
+                    <div class="widget-icon icon-ciro"><i class="fas fa-lira-sign"></i></div>
+                </div>
+                <div class="widget-footer">Satış fişleri toplamı</div>
+            </div>
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="info">
+                        <span class="widget-title">Bu Ayın Giderleri</span>
+                        <div class="widget-value" id="val-gider">Yükleniyor...</div>
+                    </div>
+                    <div class="widget-icon icon-gider"><i class="fas fa-arrow-down"></i></div>
+                </div>
+                <div class="widget-footer">Gider işlemleri toplamı</div>
+            </div>
+             <div class="widget-card">
+                <div class="widget-header">
+                    <div class="info">
+                        <span class="widget-title">Kasa / Banka Toplamı</span>
+                        <div class="widget-value" id="val-bakiye">Yükleniyor...</div>
+                    </div>
+                    <div class="widget-icon icon-bakiye"><i class="fas fa-landmark"></i></div>
+                </div>
+                <div class="widget-footer">Gelirler - Giderler</div>
+            </div>
+            
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="info">
+                        <span class="widget-title">Aktif İş Emirleri</span>
+                        <div class="widget-value" id="val-aktif-uretim">Yükleniyor...</div>
+                    </div>
+                    <div class="widget-icon icon-uretim"><i class="fas fa-gears"></i></div>
+                </div>
+                <div class="widget-footer">'Üretimde' durumundaki emirler</div>
+            </div>
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="info">
+                        <span class="widget-title">Bekleyen Siparişler</span>
+                        <div class="widget-value" id="val-bekleyen-siparis">Yükleniyor...</div>
+                    </div>
+                    <div class="widget-icon icon-siparis"><i class="fas fa-box-open"></i></div>
+                </div>
+                <div class="widget-footer">Onaylanmış siparişler</div>
+            </div>
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="info">
+                        <span class="widget-title">Toplam Müşteri</span>
+                        <div class="widget-value" id="val-toplam-musteri">Yükleniyor...</div>
+                    </div>
+                    <div class="widget-icon icon-musteri"><i class="fas fa-users"></i></div>
+                </div>
+                <div class="widget-footer">Kayıtlı cari sayısı</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function formatCurrency(value) {
+                return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(value);
+            }
+
+            fetch('/api/dashboard/executive-summary')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Veri alınırken bir ağ hatası oluştu.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('val-ciro').textContent = formatCurrency(data.aylik_ciro);
+                    document.getElementById('val-gider').textContent = formatCurrency(data.aylik_gider);
+                    document.getElementById('val-bakiye').textContent = formatCurrency(data.toplam_bakiye);
+                    document.getElementById('val-aktif-uretim').textContent = data.aktif_uretim_sayisi;
+                    document.getElementById('val-bekleyen-siparis').textContent = data.bekleyen_siparis_sayisi;
+                    document.getElementById('val-toplam-musteri').textContent = data.toplam_musteri_sayisi;
+                })
+                .catch(error => {
+                    console.error('Dashboard verileri yüklenemedi:', error);
+                    document.querySelectorAll('.widget-value').forEach(element => {
+                        element.textContent = 'Hata!';
+                        element.style.color = 'var(--danger-color)';
+                    });
+                });
+        });
+    </script>
+</body>
+</html>

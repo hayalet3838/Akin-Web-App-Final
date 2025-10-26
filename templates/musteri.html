@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müşteri Yönetimi - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; 
+            --card-bg: #fff; 
+            --text-dark: #0f172a; 
+            --text-light: #64748b;
+            --primary-color: #3b82f6; 
+            --success-color: #22c55e; 
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-color: #e2e8f0; 
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--main-bg); 
+            color: var(--text-dark); 
+            margin:0; 
+        }
+        .top-nav { 
+            background-color: var(--card-bg); 
+            padding: 0 2rem; 
+            height: 70px; 
+            box-shadow: var(--card-shadow); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+        }
+        .logo { 
+            font-size: 1.5rem; 
+            font-weight: 600; 
+            text-decoration: none; 
+            color: var(--text-dark); 
+        }
+        .btn { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 0.5rem; 
+            text-decoration: none; 
+            padding: 0.7rem 1.5rem; 
+            border-radius: 0.5rem; 
+            font-weight: 600; 
+            transition: all 0.2s; 
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-dark);
+            cursor: pointer; 
+        }
+        .btn:hover { background-color: #f8fafc; }
+        .btn-primary { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #64748b; color: white; border-color: #64748b; }
+        .btn-secondary:hover { background-color: #475569; }
+
+        .container { 
+            max-width: 1600px; 
+            margin: 2rem auto; 
+            padding: 0 2rem; 
+        }
+        .page-header { 
+            margin-bottom: 2rem; 
+        }
+        .page-header h1 { 
+            font-size: 2.25rem; 
+            font-weight: 700;
+            margin: 0; 
+        }
+        .content-card { 
+            background-color: var(--card-bg); 
+            border-radius: 0.75rem; 
+            padding: 2rem; 
+            box-shadow: var(--card-shadow); 
+            border: 1px solid var(--border-color);
+        }
+        .content-card h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select { 
+            width: 100%; 
+            padding: 0.75rem; 
+            border: 1px solid var(--border-color); 
+            border-radius: 0.5rem; 
+            font-size: 1rem; 
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead { background-color: #f8fafc; }
+        th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; text-transform: uppercase; }
+        tbody tr:last-child td { border-bottom: none; }
+        
+        .action-buttons button { background: none; border: none; font-size: 1.1rem; cursor: pointer; margin: 0 0.25rem; }
+        .action-buttons .edit-btn { color: var(--warning-color); }
+        .action-buttons .delete-btn { color: var(--danger-color); }
+        
+        .content-grid { display: grid; grid-template-columns: 420px 1fr; gap: 2rem; }
+
+        @media (max-width: 992px) {
+            .content-grid { grid-template-columns: 1fr; } 
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; margin: 1.5rem auto; }
+            .page-header h1 { font-size: 1.75rem; }
+            .content-card { padding: 1.5rem; }
+            .top-nav { padding: 0 1rem; }
+            .logo { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-users"></i> Müşteri Yönetimi</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Müşteri Listesi ve Yönetimi</h1>
+        </div>
+        <div class="content-grid">
+            <div class="content-card">
+                <h2 id="formBaslik">Yeni Müşteri Ekle</h2>
+                <form id="musteriForm">
+                    <input type="hidden" id="musteriId">
+                    <div class="form-group"><label for="ad">Müşteri Adı (*)</label><input type="text" id="ad" required></div>
+                    <div class="form-group"><label for="sorumlu_kisi">Sorumlu Kişi</label><input type="text" id="sorumlu_kisi"></div>
+                    <div class="form-group"><label for="telefon">Telefon</label><input type="text" id="telefon" placeholder="örn: 555 123 4567"></div>
+                    <div class="form-group"><label for="email">E-posta</label><input type="email" id="email"></div>
+                    <div class="form-group"><label for="adres">Adres</label><input type="text" id="adres"></div>
+                    <div class="form-group"><label for="vergi_no">Vergi No</label><input type="text" id="vergi_no"></div>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;"><i class="fas fa-save"></i> Kaydet</button>
+                        <button type="button" class="btn" onclick="resetForm()"><i class="fas fa-plus"></i> Yeni Kayıt</button>
+                    </div>
+                </form>
+            </div>
+            <div class="content-card">
+                <h2>Mevcut Müşteriler</h2>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Müşteri Adı</th>
+                                <th>Sorumlu Kişi</th>
+                                <th>Telefon</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="musteriTablosu"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API_PREFIX = '/api';
+        const form = document.getElementById('musteriForm');
+
+        async function loadMusteriler() {
+            try {
+                const response = await fetch(`${API_PREFIX}/musteriler`);
+                if (!response.ok) throw new Error("Müşteriler yüklenirken bir hata oluştu.");
+                const musteriler = await response.json();
+                renderMusteriler(musteriler);
+            } catch (error) {
+                console.error("Müşteri verileri yüklenirken hata:", error);
+                alert("Müşteriler yüklenemedi.");
+            }
+        }
+        
+        function renderMusteriler(musteriler) {
+            const tbody = document.getElementById('musteriTablosu').querySelector('tbody');
+            tbody.innerHTML = '';
+            if (musteriler.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Henüz bir müşteri bulunmamaktadır.</td></tr>';
+                return;
+            }
+            musteriler.forEach(musteri => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${musteri.ad}</strong></td>
+                    <td>${musteri.sorumlu_kisi || '-'}</td>
+                    <td>${musteri.telefon || '-'}</td>
+                    <td class="action-buttons">
+                        <button class="edit-btn" title="Düzenle" onclick='editMusteri(${JSON.stringify(musteri)})'><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" title="Sil" onclick="deleteMusteri(${musteri.id})"><i class="fas fa-trash-can"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        async function createOrUpdateMusteri(event) {
+            event.preventDefault();
+            const id = document.getElementById('musteriId').value;
+            const data = {
+                ad: document.getElementById('ad').value,
+                sorumlu_kisi: document.getElementById('sorumlu_kisi').value || null,
+                telefon: document.getElementById('telefon').value || null,
+                email: document.getElementById('email').value || null,
+                adres: document.getElementById('adres').value || null,
+                vergi_no: document.getElementById('vergi_no').value || null
+            };
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_PREFIX}/musteriler/${id}` : `${API_PREFIX}/musteriler`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                resetForm();
+                await loadMusteriler();
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+        
+        async function deleteMusteri(musteriId) {
+            if (!confirm("Bu müşteriyi silmek istediğinizden emin misiniz?")) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/musteriler/${musteriId}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                await loadMusteriler();
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+        
+        function editMusteri(musteri) {
+            document.getElementById('formBaslik').innerText = 'Müşteri Bilgilerini Düzenle';
+            document.getElementById('musteriId').value = musteri.id;
+            document.getElementById('ad').value = musteri.ad;
+            document.getElementById('sorumlu_kisi').value = musteri.sorumlu_kisi || '';
+            document.getElementById('telefon').value = musteri.telefon || '';
+            document.getElementById('email').value = musteri.email || '';
+            document.getElementById('adres').value = musteri.adres || '';
+            document.getElementById('vergi_no').value = musteri.vergi_no || '';
+            window.scrollTo(0, 0);
+        }
+
+        function resetForm() {
+            document.getElementById('formBaslik').innerText = 'Yeni Müşteri Ekle';
+            form.reset();
+            document.getElementById('musteriId').value = '';
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMusteriler();
+            form.addEventListener('submit', createOrUpdateMusteri);
+            
+            window.deleteMusteri = deleteMusteri;
+            window.editMusteri = editMusteri;
+            window.resetForm = resetForm;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeni Teklif Oluştur - Düğmeci Makina</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #f1f5f9; --text-dark: #0f172a; --text-light: #64748b;
+            --primary-color: #3b82f6; --border-color: #e2e8f0; --card-bg: #fff;
+            --success-color: #22c55e; --danger-color: #ef4444; --teklif-color: #8b5cf6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); margin:0; }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; color: white; }
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-secondary { background-color: #64748b; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header h1 { font-size: 2.25rem; font-weight: 700; margin: 0 0 2rem 0; }
+        .content-card { background-color: var(--card-bg); border-radius: 0.75rem; padding: 2.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid var(--border-color); border-top: 4px solid var(--teklif-color); }
+        h2 { font-size: 1.5rem; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-top: 0; margin-bottom: 1.5rem; }
+        .section-divider { margin: 2.5rem 0; border: 0; height: 1px; background-color: var(--border-color); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 1rem; }
+        .items-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+        .items-table th, .items-table td { padding: 0.75rem; border-bottom: 1px solid var(--border-color); text-align: left; vertical-align: top; }
+        .items-table thead { background-color: #f8fafc; }
+        .items-table th { font-weight: 600; color: var(--text-light); font-size: 0.875rem; }
+        .items-table input, .items-table select { width: 100%; padding: 0.6rem; border: 1px solid var(--border-color); border-radius: 0.5rem; font-size: 0.95rem; }
+        .actions-and-summary { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 1.5rem; gap: 2rem; flex-wrap: wrap; }
+        .summary-box { width: 320px; border: 1px solid var(--border-color); border-radius: 0.75rem; overflow: hidden; font-size: 1rem; flex-shrink: 0; margin-left: auto; }
+        .summary-row { display: flex; justify-content: space-between; padding: 1rem 1.25rem; }
+        .summary-row.grand-total { background-color: var(--text-dark); color: white; font-size: 1.2rem; font-weight: 600; }
+        .page-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-file-signature"></i> Yeni Teklif Oluştur</a>
+        <a href="/teklifler" class="btn btn-secondary"><i class="fas fa-list"></i> Teklif Listesi</a>
+    </nav>
+    <form id="teklifForm">
+        <div class="container">
+            <div class="page-header"><h1>Yeni Teklif Oluştur</h1></div>
+            <div class="content-card">
+                <h2>Teklif Bilgileri</h2>
+                <div class="form-grid">
+                    <div class="form-group"><label for="musteri">Müşteri</label><select id="musteri" required></select></div>
+                    <div class="form-group"><label for="teklif_kodu">Teklif Numarası</label><input type="text" id="teklif_kodu" readonly></div>
+                    <div class="form-group"><label for="gecerlilik_tarihi">Geçerlilik Tarihi</label><input type="date" id="gecerlilik_tarihi" required></div>
+                </div>
+                
+                <hr class="section-divider">
+
+                <h2>Teklif Kalemleri</h2>
+                <table class="items-table" id="teklifKalemleri">
+                    <thead><tr><th>Açıklama</th><th>Miktar</th><th>Birim</th><th>Birim Fiyat (₺)</th><th>KDV (%)</th><th>Toplam (₺)</th><th></th></tr></thead>
+                    <tbody></tbody>
+                </table>
+                <datalist id="urun-listesi-datalist"></datalist>
+                <div class="actions-and-summary">
+                    <button type="button" class="btn" style="background-color:#10b981; color:white;" id="addRowBtn"><i class="fas fa-plus"></i> Yeni Satır Ekle</button>
+                    <div class="summary-box">
+                        <div class="summary-row"><span>Ara Toplam</span><strong id="araToplam">0.00 ₺</strong></div>
+                        <div class="summary-row"><span>Toplam KDV</span><strong id="toplamKdv">0.00 ₺</strong></div>
+                        <div class="summary-row grand-total"><span>Genel Toplam</span><strong id="genelToplam">0.00 ₺</strong></div>
+                    </div>
+                </div>
+
+                <hr class="section-divider">
+
+                <h2>Ek Notlar</h2>
+                <div class="form-group">
+                   <textarea id="notlar" rows="4" placeholder="Teklife eklemek istediğiniz özel notlar..."></textarea>
+                </div>
+
+                <div class="page-actions">
+                    <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;"><i class="fas fa-save"></i> Teklifi Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const musteriSelect = document.getElementById('musteri');
+        const kalemlerTbody = document.querySelector('#teklifKalemleri tbody');
+        const addRowBtn = document.getElementById('addRowBtn');
+        const form = document.getElementById('teklifForm');
+        const urunDatalist = document.getElementById('urun-listesi-datalist');
+        let urunListesi = [];
+
+        async function loadInitialData() {
+            try {
+                const [musteriRes, urunRes] = await Promise.all([ fetch('/api/musteriler'), fetch('/api/urunler') ]);
+                const musteriler = await musteriRes.json();
+                urunListesi = await urunRes.json();
+                musteriSelect.innerHTML = '<option value="">Müşteri Seçiniz...</option>';
+                musteriler.forEach(m => musteriSelect.innerHTML += `<option value="${m.id}">${m.ad}</option>`);
+                urunDatalist.innerHTML = '';
+                urunListesi.forEach(u => urunDatalist.innerHTML += `<option value="${u.urun_adi}" data-fiyat="${u.birim_fiyat}" data-id="${u.id}"></option>`);
+                createNewRow();
+            } catch (err) { alert('Gerekli veriler yüklenemedi!'); }
+        }
+
+        function generateTeklifKodu() {
+            const now = new Date();
+            const timestamp = now.getFullYear() + '-' + String(now.getTime()).slice(-4);
+            document.getElementById('teklif_kodu').value = `TEKLIF-${timestamp}`;
+        }
+        
+        function setDefaultDates() {
+            const today = new Date();
+            const oneMonthLater = new Date(today.setMonth(today.getMonth() + 1));
+            document.getElementById('gecerlilik_tarihi').value = oneMonthLater.toISOString().split('T')[0];
+        }
+
+        function createNewRow() {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="width:40%;"><input type="text" list="urun-listesi-datalist" class="kalem-aciklama" placeholder="Ürün veya hizmet açıklaması..." required></td>
+                <td><input type="number" class="kalem-miktar" value="1" step="any"></td>
+                <td><input type="text" class="kalem-birim" value="adet"></td>
+                <td><input type="number" class="kalem-birim-fiyat" value="0.00" step="0.01"></td>
+                <td><input type="number" class="kalem-kdv" value="20"></td>
+                <td><input type="text" class="kalem-toplam" readonly></td>
+                <td><button type="button" class="btn" style="background-color:${'var(--danger-color)'}; padding:0.5rem;" onclick="this.closest('tr').remove(); calculateTotals();"><i class="fas fa-trash"></i></button></td>
+            `;
+            kalemlerTbody.appendChild(tr);
+        }
+
+        function calculateTotals() {
+            let araToplam = 0, toplamKdv = 0;
+            document.querySelectorAll('#teklifKalemleri tbody tr').forEach(tr => {
+                const miktar = parseFloat(tr.querySelector('.kalem-miktar').value) || 0;
+                const birimFiyat = parseFloat(tr.querySelector('.kalem-birim-fiyat').value) || 0;
+                const kdvOrani = parseFloat(tr.querySelector('.kalem-kdv').value) || 0;
+                const satirToplam = miktar * birimFiyat;
+                const satirKdv = satirToplam * (kdvOrani / 100);
+                tr.querySelector('.kalem-toplam').value = (satirToplam + satirKdv).toFixed(2) + ' ₺';
+                araToplam += satirToplam;
+                toplamKdv += satirKdv;
+            });
+            const formatCurrency = (val) => val.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+            document.getElementById('araToplam').textContent = formatCurrency(araToplam);
+            document.getElementById('toplamKdv').textContent = formatCurrency(toplamKdv);
+            document.getElementById('genelToplam').textContent = formatCurrency(araToplam + toplamKdv);
+        }
+
+        kalemlerTbody.addEventListener('input', e => {
+            const target = e.target;
+            if (target.matches('.kalem-aciklama')) {
+                const selectedOption = Array.from(urunDatalist.options).find(opt => opt.value === target.value);
+                if (selectedOption) {
+                    const row = target.closest('tr');
+                    row.querySelector('.kalem-birim-fiyat').value = parseFloat(selectedOption.dataset.fiyat || 0).toFixed(2);
+                }
+            }
+            calculateTotals();
+        });
+        
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kaydediliyor...';
+            const teklifData = {
+                musteri_id: parseInt(musteriSelect.value),
+                teklif_kodu: document.getElementById('teklif_kodu').value,
+                gecerlilik_tarihi: document.getElementById('gecerlilik_tarihi').value,
+                notlar: document.getElementById('notlar').value,
+                toplam_tutar: parseFloat(document.getElementById('araToplam').textContent.replace(/[^\d,-]/g, '').replace(',', '.')),
+                kdv_tutari: parseFloat(document.getElementById('toplamKdv').textContent.replace(/[^\d,-]/g, '').replace(',', '.')),
+                genel_toplam: parseFloat(document.getElementById('genelToplam').textContent.replace(/[^\d,-]/g, '').replace(',', '.'))
+            };
+            const kalemlerData = Array.from(document.querySelectorAll('#teklifKalemleri tbody tr')).map(tr => {
+                const aciklamaInput = tr.querySelector('.kalem-aciklama');
+                const selectedOption = Array.from(urunDatalist.options).find(opt => opt.value === aciklamaInput.value);
+                return {
+                    aciklama: aciklamaInput.value,
+                    urun_id: selectedOption ? parseInt(selectedOption.dataset.id) : null,
+                    miktar: parseFloat(tr.querySelector('.kalem-miktar').value) || 0,
+                    birim: tr.querySelector('.kalem-birim').value,
+                    birim_fiyat: parseFloat(tr.querySelector('.kalem-birim-fiyat').value) || 0,
+                    kdv_orani: parseInt(tr.querySelector('.kalem-kdv').value) || 0,
+                    toplam_fiyat: parseFloat(tr.querySelector('.kalem-toplam').value) || 0
+                }
+            });
+            if (!teklifData.musteri_id) { alert('Lütfen bir müşteri seçin.'); submitButton.disabled = false; submitButton.innerHTML = '<i class="fas fa-save"></i> Teklifi Kaydet'; return; }
+            if (kalemlerData.some(k => !k.aciklama)) { alert('Lütfen tüm kalemler için bir açıklama girin.'); submitButton.disabled = false; submitButton.innerHTML = '<i class="fas fa-save"></i> Teklifi Kaydet'; return; }
+            try {
+                const response = await fetch('/api/teklifler', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ teklif: teklifData, kalemler: kalemlerData })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail);
+                alert(result.message);
+                window.location.href = `/teklif-detay/${result.teklif_id}`;
+            } catch(error) {
+                alert(`Hata: ${error.message}`);
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-save"></i> Teklifi Kaydet';
+            }
+        });
+        
+        // --- YENİ: ENTER TUŞU İLE GEÇİŞ FONKSİYONU ---
+        form.addEventListener('keydown', function(e) {
+            if (e.key !== 'Enter') return;
+            
+            const activeElement = document.activeElement;
+            if (!activeElement || (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'SELECT' && activeElement.tagName !== 'TEXTAREA')) {
+                return;
+            }
+            
+            e.preventDefault();
+            const currentRow = activeElement.closest('tr');
+            
+            // Eğer bir tablo satırındaysak
+            if (currentRow) {
+                const inputsInRow = Array.from(currentRow.querySelectorAll('input, select'));
+                const currentIndexInRow = inputsInRow.indexOf(activeElement);
+
+                if (currentIndexInRow < inputsInRow.length - 1) {
+                    // Satır içindeki bir sonraki input'a geç
+                    inputsInRow[currentIndexInRow + 1].focus();
+                } else {
+                    // Satırın sonundaysak, bir sonraki satıra geç veya yeni satır oluştur
+                    const nextRow = currentRow.nextElementSibling;
+                    if (nextRow) {
+                        nextRow.querySelector('.kalem-aciklama').focus();
+                    } else {
+                        addRowBtn.click();
+                        // Yeni eklenen satırın ilk inputuna odaklanmak için kısa bir gecikme
+                        setTimeout(() => {
+                            const newLastRow = kalemlerTbody.querySelector('tr:last-child');
+                            if (newLastRow) {
+                                newLastRow.querySelector('.kalem-aciklama').focus();
+                            }
+                        }, 50);
+                    }
+                }
+            } else {
+                // Tablo dışında normal form elemanları arasında geçiş
+                const focusable = Array.from(form.querySelectorAll('select, input:not([readonly]), textarea'));
+                const index = focusable.indexOf(activeElement);
+
+                if (index > -1 && index < focusable.length - 1) {
+                    focusable[index + 1].focus();
+                } else if (index === focusable.length - 1 && activeElement.tagName === 'TEXTAREA') {
+                    // Notlar alanından sonra kaydet butonuna odaklan
+                     form.querySelector('button[type="submit"]').focus();
+                }
+                 else {
+                    // Formun başından tabloya geçiş
+                    const firstProductInput = kalemlerTbody.querySelector('.kalem-aciklama');
+                    if (firstProductInput) {
+                        firstProductInput.focus();
+                    }
+                }
+            }
+        });
+
+        generateTeklifKodu();
+        setDefaultDates();
+        loadInitialData();
+        addRowBtn.addEventListener('click', createNewRow);
+    });
+    </script>
+</body>
+</html>

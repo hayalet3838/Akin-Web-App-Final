@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Cari Yönetimi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root { --main-bg: #f1f5f9; --card-bg: #fff; --text-dark: #0f172a; --text-light: #64748b; --primary-color: #3b82f6; --border-color: #e2e8f0; --danger-color: #ef4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--main-bg); color: var(--text-dark); }
+        .top-nav { background-color: var(--card-bg); padding: 0 2rem; height: 70px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--text-dark); }
+        .btn { padding: 0.7rem 1.5rem; border-radius: 0.5rem; font-weight: 600; border: none; cursor: pointer; color: white; }
+        .btn-secondary { background-color: #64748b; }
+        .btn-primary { background-color: var(--primary-color); }
+        .container { max-width: 1600px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header h1 { font-size: 2.25rem; margin: 0 0 2rem 0; }
+        .tabs { display: flex; border-bottom: 2px solid var(--border-color); }
+        .tab-link { padding: 1rem 1.5rem; border: none; background: none; cursor: pointer; font-size: 1.1rem; font-weight: 600; color: var(--text-light); border-bottom: 3px solid transparent; }
+        .tab-link.active { color: var(--primary-color); border-bottom-color: var(--primary-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .content-card { background-color: var(--card-bg); padding: 2rem; border-radius: 0 0.75rem 0.75rem 0.75rem; border: 1px solid var(--border-color); border-top: none; }
+        .content-grid { display: grid; grid-template-columns: 450px 1fr; gap: 2rem; align-items: flex-start; }
+        h2 { font-size: 1.5rem; margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 0.5rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: #f8fafc; }
+        .action-buttons button { background: none; border: none; font-size: 1.1rem; cursor: pointer; color: var(--danger-color); }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="/" class="logo"><i class="fas fa-address-book"></i> Cari Yönetimi</a>
+        <a href="/" class="btn btn-secondary"><i class="fas fa-home"></i> Ana Sayfaya Dön</a>
+    </nav>
+    <div class="container">
+        <div class="page-header"><h1>Cari Hesap Yönetimi</h1></div>
+        <div class="tabs">
+            <button class="tab-link active" data-tab="musteriler">Müşteriler</button>
+            <button class="tab-link" data-tab="tedarikciler">Tedarikçiler</button>
+        </div>
+        <div id="musteriler" class="tab-content active">
+            <div class="content-card">
+                <div class="content-grid">
+                    <form id="musteriForm">
+                        <h2>Yeni Müşteri Ekle</h2>
+                        <div class="form-group"><label>Ad</label><input type="text" id="musteriAd" required></div>
+                        <div class="form-group"><label>Adres</label><textarea id="musteriAdres" rows="3"></textarea></div>
+                        <div class="form-group"><label>Telefon</label><input type="tel" id="musteriTelefon"></div>
+                        <div class="form-group"><label>E-posta</label><input type="email" id="musteriEmail"></div>
+                        <div class="form-group"><label>Vergi Dairesi</label><input type="text" id="musteriVergiDairesi"></div>
+                        <div class="form-group"><label>Vergi No</label><input type="text" id="musteriVergiNo"></div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Müşteriyi Kaydet</button>
+                    </form>
+                    <div>
+                        <h2>Mevcut Müşteriler</h2>
+                        <table id="musteriTablosu">
+                            <thead><tr><th>AD</th><th>TELEFON</th><th>İŞLEMLER</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tedarikciler" class="tab-content">
+            <div class="content-card">
+                 <div class="content-grid">
+                    <form id="tedarikciForm">
+                        <h2>Yeni Tedarikçi Ekle</h2>
+                        <div class="form-group"><label>Firma Adı</label><input type="text" id="tedarikciFirmaAdi" required></div>
+                        <div class="form-group"><label>Yetkili Kişi</label><input type="text" id="tedarikciYetkiliKisi"></div>
+                        <div class="form-group"><label>Telefon</label><input type="tel" id="tedarikciTelefon"></div>
+                        <div class="form-group"><label>E-posta</label><input type="email" id="tedarikciEmail"></div>
+                        <div class="form-group"><label>Vergi Dairesi</label><input type="text" id="tedarikciVergiDairesi"></div>
+                        <div class="form-group"><label>Vergi No</label><input type="text" id="tedarikciVergiNo"></div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Tedarikçiyi Kaydet</button>
+                    </form>
+                    <div>
+                        <h2>Mevcut Tedarikçiler</h2>
+                        <table id="tedarikciTablosu">
+                            <thead><tr><th>FİRMA ADI</th><th>YETKİLİ</th><th>İŞLEMLER</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API_PREFIX = '/api';
+
+        async function loadData() {
+            try {
+                const [musteriRes, tedarikciRes] = await Promise.all([
+                    fetch(`${API_PREFIX}/musteriler`),
+                    fetch(`${API_PREFIX}/tedarikciler`)
+                ]);
+                const musteriler = await musteriRes.json();
+                const tedarikciler = await tedarikciRes.json();
+                renderMusteriler(musteriler);
+                renderTedarikciler(tedarikciler);
+            } catch (error) { alert("Veriler yüklenemedi."); }
+        }
+
+        function renderMusteriler(data) {
+            const tbody = document.getElementById('musteriTablosu').querySelector('tbody');
+            tbody.innerHTML = '';
+            data.forEach(m => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${m.ad}</td>
+                        <td>${m.telefon || '-'}</td>
+                        <td class="action-buttons"><button onclick="deleteMusteri(${m.id})"><i class="fas fa-trash-alt"></i></button></td>
+                    </tr>`;
+            });
+        }
+
+        function renderTedarikciler(data) {
+            const tbody = document.getElementById('tedarikciTablosu').querySelector('tbody');
+            tbody.innerHTML = '';
+            data.forEach(t => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${t.firma_adi}</td>
+                        <td>${t.yetkili_kisi || '-'}</td>
+                        <td class="action-buttons"><button onclick="deleteTedarikci(${t.id})"><i class="fas fa-trash-alt"></i></button></td>
+                    </tr>`;
+            });
+        }
+
+        document.getElementById('musteriForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                ad: document.getElementById('musteriAd').value,
+                adres: document.getElementById('musteriAdres').value,
+                telefon: document.getElementById('musteriTelefon').value,
+                email: document.getElementById('musteriEmail').value,
+                vergi_dairesi: document.getElementById('musteriVergiDairesi').value,
+                vergi_no: document.getElementById('musteriVergiNo').value
+            };
+            try {
+                const response = await fetch(`${API_PREFIX}/musteriler`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+                if (!response.ok) { const err = await response.json(); throw new Error(err.detail); }
+                alert('Müşteri başarıyla eklendi.');
+                e.target.reset();
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        });
+
+        document.getElementById('tedarikciForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                firma_adi: document.getElementById('tedarikciFirmaAdi').value,
+                yetkili_kisi: document.getElementById('tedarikciYetkiliKisi').value,
+                telefon: document.getElementById('tedarikciTelefon').value,
+                email: document.getElementById('tedarikciEmail').value,
+                vergi_dairesi: document.getElementById('tedarikciVergiDairesi').value,
+                vergi_no: document.getElementById('tedarikciVergiNo').value
+            };
+            try {
+                const response = await fetch(`${API_PREFIX}/tedarikciler`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
+                if (!response.ok) { const err = await response.json(); throw new Error(err.detail); }
+                alert('Tedarikçi başarıyla eklendi.');
+                e.target.reset();
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        });
+
+        async function deleteMusteri(id) {
+            if (!confirm('Bu müşteriyi silmek istediğinizden emin misiniz? Müşteriye ait sipariş veya fatura varsa silme işlemi başarısız olacaktır.')) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/musteriler/${id}`, { method: 'DELETE' });
+                if (!response.ok) { const err = await response.json(); throw new Error(err.detail); }
+                alert('Müşteri başarıyla silindi.');
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+
+        async function deleteTedarikci(id) {
+            if (!confirm('Bu tedarikçiyi silmek istediğinizden emin misiniz? Tedarikçiye ait fatura varsa silme işlemi başarısız olacaktır.')) return;
+            try {
+                const response = await fetch(`${API_PREFIX}/tedarikciler/${id}`, { method: 'DELETE' });
+                if (!response.ok) { const err = await response.json(); throw new Error(err.detail); }
+                alert('Tedarikçi başarıyla silindi.');
+                await loadData();
+            } catch (error) { alert(`Hata: ${error.message}`); }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            const tabs = document.querySelectorAll('.tab-link');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
