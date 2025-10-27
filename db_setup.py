@@ -21,7 +21,10 @@ def load_sql_dump(db_host, db_name, db_user, db_password, db_port, sql_file_path
         cursor = conn.cursor()
 
         print(f"INFO: {sql_file_path} dosyasını okuma...")
-        with open(sql_file_path, 'r', encoding='utf-8') as f:
+        # ----- DEĞİŞİKLİK BURADA -----
+        # BOM'u (Byte Order Mark) atlamak için utf-8-sig kullanıyoruz
+        with open(sql_file_path, 'r', encoding='utf-8-sig') as f:
+        # ----- DEĞİŞİKLİK SONU -----
             sql_script = f.read()
 
         print("INFO: SQL komutları çalıştırılıyor...")
@@ -33,6 +36,9 @@ def load_sql_dump(db_host, db_name, db_user, db_password, db_port, sql_file_path
         raise # Hatanın yukarıya fırlatılmasını sağlıyoruz
     except FileNotFoundError:
         print(f"HATA: {sql_file_path} dosyası bulunamadı. Yüklenemedi.")
+        raise
+    except UnicodeDecodeError as e: # Unicode hatasını daha spesifik yakalayalım
+        print(f"HATA: SQL dosyası okunurken kodlama hatası: {e}. Dosyanın UTF-8 olduğundan emin olun.")
         raise
     finally:
         if conn:
