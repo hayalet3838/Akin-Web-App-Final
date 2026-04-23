@@ -34,20 +34,13 @@ BASE_DIR = Path(__file__).resolve().parent
 
 # FastAPI uygulamasını oluşturma
 app = FastAPI(title="Fabrika Yönetim Sistemi")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Veritabanı Bağlantı Ayarları
-DB_NAME = os.getenv("DB_NAME", "fabrika_pdks")
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "1234")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
-
-# Veritabanı Bağlantı Havuzu (Connection Pool)
-try:
-    db_pool = psycopg2.pool.SimpleConnectionPool(1, 20, dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
-except Exception as e:
-    print(f"Veritabanı bağlantı havuzu oluşturulurken hata oluştu: {e}")
-    db_pool = None
+db_pool = psycopg2.pool.SimpleConnectionPool(
+    1,
+    20,
+    DATABASE_URL
+)
 
 # --- GÜVENLİK AYARLARI ---
 SECRET_KEY = os.getenv("SECRET_KEY", "COK_GIZLI_VE_GUCLU_BIR_ANAHTAR_BURAYA_YAZILMALI")
