@@ -2571,3 +2571,12 @@ def analyze_all_orders_for_mrp():
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
 
+@app.get("/api/ping")
+def ping():
+    conn = db_pool.getconn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT 1")
+        return {"status": "ok"}
+    finally:
+        db_pool.putconn(conn)
