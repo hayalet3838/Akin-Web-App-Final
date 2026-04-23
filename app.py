@@ -33,14 +33,21 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 BASE_DIR = Path(__file__).resolve().parent
 
 # FastAPI uygulamasını oluşturma
-app = FastAPI(title="Fabrika Yönetim Sistemi")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-db_pool = psycopg2.pool.SimpleConnectionPool(
-    1,
-    20,
-    DATABASE_URL
-)
+if not DATABASE_URL:
+    raise Exception("DATABASE_URL bulunamadı! Render environment ayarlarını kontrol et.")
+
+try:
+    db_pool = psycopg2.pool.SimpleConnectionPool(
+        1,
+        20,
+        dsn=DATABASE_URL
+    )
+    print("✅ Veritabanı bağlantısı başarılı")
+except Exception as e:
+    print(f"❌ DB bağlantı hatası: {e}")
+    db_pool = None
 
 # --- GÜVENLİK AYARLARI ---
 SECRET_KEY = os.getenv("SECRET_KEY", "COK_GIZLI_VE_GUCLU_BIR_ANAHTAR_BURAYA_YAZILMALI")
